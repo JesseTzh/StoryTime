@@ -1,4 +1,67 @@
 # YAML 兼容 JSON 格式，可直接由制作工具解析
+- id: conversation_a_yuan_market_rumors
+  npcId: npc_a_yuan
+  title: 市声碎线
+  entryNodeId: node_entry
+  conditions:
+    all:
+      - fact: facts.market_rumor_heard
+        not_equals: true
+  priority: 99
+  nodes:
+    - id: node_entry
+      speaker: npc_a_yuan
+      text: 集市上讨价声一阵高过一阵，阿圆把摊布边角压住，低声说，今日的闲话不只关粮价，也关山路和人心。
+      replies:
+        - id: reply_ask_food_price
+          text: 先说粮价，谁在借乱抬价？
+          nextNodeId: node_food_price
+        - id: reply_ask_trade_route
+          text: 先说商路，最近哪条传闻最不寻常？
+          nextNodeId: node_trade_route
+        - id: reply_ask_panic
+          text: 先说镇民恐慌，哪里最容易起冲突？
+          nextNodeId: node_panic
+    - id: node_food_price
+      speaker: npc_a_yuan
+      text: 她说米铺门前的人越来越急，有人买不起，有人却越买越多。买卖若只剩怕，价钱就会自己长腿。
+      replies:
+        - id: reply_market_rumors_close_food
+          text: 我记下，粮价背后也有线索。
+          nextNodeId: node_close
+    - id: node_trade_route
+      speaker: npc_a_yuan
+      text: 她说赶车人不敢明说黑岭，只说绕路的人回来少，带旧箱的人更少。话传到集市，就只剩涨价的理由。
+      replies:
+        - id: reply_market_rumors_close_route
+          text: 我记下，商路风声不能只当闲话。
+          nextNodeId: node_close
+    - id: node_panic
+      speaker: npc_a_yuan
+      text: 她看向米铺和镇门方向，说人最怕没饭，也怕病人挤到门前。只要有人喊一声，集市就可能先乱。
+      replies:
+        - id: reply_market_rumors_close_panic
+          text: 我记下，先稳人心再查真相。
+          nextNodeId: node_close
+    - id: node_close
+      speaker: npc_a_yuan
+      text: 阿圆把话头收回针线里，不再多说。集市仍旧喧闹，可你已经听出几处不该重合的风声。
+      replies:
+        - id: reply_confirm_market_rumors
+          text: 这些话够用了。
+          effects:
+            - type: add_fact
+              key: market_rumor_heard
+              value: true
+            - type: change_variable
+              key: truth_progress
+              delta: 1
+            - type: change_relationship
+              source: player
+              target: npc_zhao_sanniang
+              path: trust
+              delta: 1
+          endConversation: true
 - id: conversation_a_yuan_daily_01
   npcId: npc_a_yuan
   title: 晨市轻响

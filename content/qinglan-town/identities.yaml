@@ -3,7 +3,6 @@
   {
     "id": "identity_merchant",
     "name": "外乡行商",
-    "description": "金钱较多，擅长交易、谈判和资源调度，适合处理粮价线、商路线与赵三娘情报线。",
     "backgroundSummary": "你循着一批迟迟未归的货和断裂的商路来到镇上，想在乱局里找回信誉与真相。",
     "intro": {
       "title": "商路断处",
@@ -35,7 +34,6 @@
   {
     "id": "identity_warrior",
     "name": "落魄武人",
-    "description": "体力与战斗能力较强，适合处理匪患线、巡守线、山林探索和危险事件。",
     "backgroundSummary": "你背着旧伤和未偿的人情入镇，想在匪患与巡守的夹缝里证明自己仍有用处。",
     "intro": {
       "title": "旧刃新债",
@@ -67,7 +65,6 @@
   {
     "id": "identity_doctor",
     "name": "游方医者",
-    "description": "医术高，适合处理疫病线、药铺线和民居区救助事件。",
     "backgroundSummary": "你带着药箱追查异常病症而来，想确认这场疫病究竟是天灾、误药，还是人祸。",
     "intro": {
       "title": "药箱与病源",

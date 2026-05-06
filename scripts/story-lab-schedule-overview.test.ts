@@ -6,7 +6,6 @@ import { buildScheduleEventOverview } from '../apps/story-lab/src/editor/schedul
 
 function pack(): ContentPack {
   return {
-    gameTitle: 'Test Story',
     packId: 'test-story',
     version: '0.1.0',
     schemaVersion: '1.0.0',
@@ -15,7 +14,6 @@ function pack(): ContentPack {
       name: 'Test World',
       summary: '',
       editorBackground: 'Editor background.',
-      playerIntroduction: 'Player introduction.',
       maxDays: 3,
       segments: ['morning', 'noon', 'night'],
       actionPointsPerSegment: 2,

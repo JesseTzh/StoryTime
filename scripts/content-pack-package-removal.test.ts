@@ -48,3 +48,12 @@ test('generated content packs do not include legacy actions or event player opti
     }
   }
 })
+
+test('content packs no longer include the removed split title field', async () => {
+  const contentDirs = await discoverContentSourceDirs(defaultContentRoot)
+  const packs = await Promise.all(contentDirs.map((dir) => loadContentPackFromSource(dir)))
+
+  for (const pack of packs) {
+    expect(pack).not.toHaveProperty('game' + 'Title')
+  }
+})

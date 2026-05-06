@@ -104,8 +104,8 @@ describe('game-client source constraints', () => {
     const dialogSource = readSource('apps/game-client/src/features/game/OriginIntroDialog.tsx')
 
     expect(identitySource).toContain('identity.backgroundSummary')
-    expect(identitySource).toContain('pack.world.playerIntroduction')
-    expect(identitySource).toContain('data-test-id="identity-world-introduction"')
+    expect(identitySource).not.toContain(`pack.world.${['player', 'Introduction'].join('')}`)
+    expect(identitySource).not.toContain('data-test-id="identity-world-introduction"')
     expect(identitySource).toContain('data-test-id={`identity-background-summary-${identity.id}`}')
     expect(gamePageSource).toContain('OriginIntroDialog')
     expect(storeSource).toContain('dismissOriginIntro')

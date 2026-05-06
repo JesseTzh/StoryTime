@@ -40,7 +40,6 @@ export function validateSchema(pack: ContentPack): ValidationIssue[] {
   if (!pack.packId) issues.push(issue('error', 'schema_error', '缺少 packId'))
   if (!pack.world?.maxDays || pack.world.maxDays < 1) issues.push(issue('error', 'schema_error', 'world.maxDays 必须大于 0'))
   if (!pack.world?.editorBackground) issues.push(issue('error', 'schema_error', 'world.editorBackground 必填', pack.packId, 'world.editorBackground'))
-  if (!pack.world?.playerIntroduction) issues.push(issue('error', 'schema_error', 'world.playerIntroduction 必填', pack.packId, 'world.playerIntroduction'))
   if (!pack.runtime?.initialState?.playerLocationId) issues.push(issue('error', 'schema_error', 'runtime.initialState.playerLocationId 必填', pack.packId, 'runtime.initialState.playerLocationId'))
   if (!Array.isArray(pack.runtime?.dailyDriftRules)) issues.push(issue('error', 'schema_error', 'runtime.dailyDriftRules 必须是数组', pack.packId, 'runtime.dailyDriftRules'))
 

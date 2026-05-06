@@ -144,7 +144,7 @@ export function TopStatusBar() {
     <Card className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-black/40 px-6 py-3 backdrop-blur-md" data-test-id="top-status-bar">
       <div className="top-status-left" data-test-id="top-status-left">
         <div data-test-id="top-status-summary">
-          <div className="text-lg font-semibold text-amber-100" data-test-id="top-status-title">{pack.gameTitle}</div>
+          <div className="text-lg font-semibold text-amber-100" data-test-id="top-status-title">{pack.world.name}</div>
           <div className="mt-1 text-xs text-stone-400" data-test-id="top-status-identity">身份：{identity?.name}</div>
         </div>
         <div

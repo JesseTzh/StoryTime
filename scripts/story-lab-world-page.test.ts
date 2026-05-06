@@ -13,8 +13,8 @@ test('world page groups world details into tabs', () => {
   expect(pageSource).toContain("data-test-id={`world-tab-panel-${activeWorldTab}`}")
   expect(pageSource).toContain('pack.world.editorBackground')
   expect(pageSource).toContain('data-test-id="world-basics-editor-background"')
-  expect(pageSource).toContain('pack.world.playerIntroduction')
-  expect(pageSource).toContain('data-test-id="world-basics-player-introduction"')
+  expect(pageSource).not.toContain(`pack.world.${['player', 'Introduction'].join('')}`)
+  expect(pageSource).not.toContain('data-test-id="world-basics-player-introduction"')
   expect(pageSource).not.toContain('data-test-id="world-file-preview-section"')
 })
 

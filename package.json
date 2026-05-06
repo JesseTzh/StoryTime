@@ -12,6 +12,7 @@
     "dev:game": "pnpm --filter @tss/game-client dev",
     "dev:lab": "pnpm --filter @tss/story-lab dev",
     "build": "pnpm build:content-pack && pnpm -r build",
+    "check": "pnpm validate:content && pnpm typecheck && pnpm test && pnpm build:content-pack",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "build:content-pack": "tsx --tsconfig tsconfig.base.json scripts/build-content-pack.ts",

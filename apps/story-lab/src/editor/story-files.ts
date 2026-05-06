@@ -24,7 +24,6 @@ export function buildStoryFiles(pack: ContentPack): StoryFile[] {
       label: '故事基础',
       count: 1,
       value: {
-        gameTitle: pack.gameTitle,
         packId: pack.packId,
         version: pack.version,
         schemaVersion: pack.schemaVersion,

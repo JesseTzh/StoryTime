@@ -6,14 +6,12 @@ import { initializeGameStore, useGameStore } from './game-store'
 const pack = {
   packId: 'pack_fixture',
   version: '1.0.0',
-  gameTitle: 'Fixture',
   schemaVersion: '1.0.0',
   world: {
     id: 'world_fixture',
     name: 'Fixture World',
     summary: 'Fixture summary',
     editorBackground: 'Fixture editor background',
-    playerIntroduction: 'Fixture player introduction',
     maxDays: 1,
     segments: ['morning'],
     actionPointsPerSegment: 1,
@@ -55,7 +53,6 @@ const pack = {
   identities: [{
     id: 'identity_fixture',
     name: 'Identity',
-    description: 'Identity',
     backgroundSummary: 'Identity background',
     initialState: {
       health: 100,

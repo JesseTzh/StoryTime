@@ -1,19 +1,17 @@
 - id: interaction_ask_gate_news
   name: 打听山路消息
   description: 向镇门巡守打听商路、流民和黑岭盗的消息。
-  type: environment
-  targetType: location
-  targetId: loc_town_gate
+  type: conversation
+  targetType: npc
+  targetId: npc_lu_huaishan
   cost:
     actionPoints: 1
   conditions:
     all:
       - fact: npc.npc_lu_huaishan.state.alive
         equals: true
-  environmentType: search
+  conversationId: conversation_lu_bandit_warning
   effects:
-    - type: start_conversation
-      conversationId: conversation_lu_bandit_warning
     - type: change_relationship
       source: player
       target: npc_lu_huaishan
@@ -24,34 +22,20 @@
       delta: 1
 - id: interaction_help_refugees_gate
   name: 协助查验流民
-  description: 在镇门帮忙安置流民，短期稳定秩序。
-  type: environment
-  targetType: location
-  targetId: loc_town_gate
+  description: 与陆怀山商量镇门流民查验和安置办法，短期稳定秩序。
+  type: conversation
+  targetType: npc
+  targetId: npc_lu_huaishan
   cost:
     actionPoints: 1
     stamina: 8
   conditions:
     all:
+      - fact: npc.npc_lu_huaishan.state.alive
+        equals: true
       - fact: player.state.stamina
         greater_than_or_equal: 8
-  environmentType: search
-  effects:
-    - type: change_player_attribute
-      attribute: stamina
-      delta: -8
-    - type: change_variable
-      key: town_order
-      delta: 3
-    - type: change_variable
-      key: refugee_pressure
-      delta: -5
-    - type: change_player_attribute
-      attribute: reputation
-      delta: 4
-    - type: add_fact
-      key: player_helped_refugees
-      value: true
+  conversationId: conversation_lu_refugee_check
 - id: interaction_patrol_with_lu
   name: 协助巡逻
   description: 陪陆怀山巡门半日，提高巡守力量。
@@ -143,12 +127,12 @@
 - id: interaction_gather_market_rumors
   name: 打听集市传闻
   description: 在摊贩间打听粮价、商路和镇民恐慌。
-  type: environment
-  targetType: location
-  targetId: loc_market
+  type: conversation
+  targetType: npc
+  targetId: npc_a_yuan
   cost:
     actionPoints: 1
-  environmentType: search
+  conversationId: conversation_a_yuan_market_rumors
   effects:
     - type: add_fact
       key: market_rumor_heard
@@ -189,7 +173,7 @@
 - id: interaction_persuade_luo_release_grain
   name: 说服平价放粮
   description: 用谈判说服罗守仓低价放出一部分米粮。
-  type: environment
+  type: conversation
   targetType: npc
   targetId: npc_luo_shoucang
   cost:
@@ -201,28 +185,7 @@
             equals: true
           - fact: facts.luo_hidden_grain_found
             equals: true
-  environmentType: search
-  effects:
-    - type: add_fact
-      key: shen_help_request_seen
-      value: true
-    - type: change_variable
-      key: food_price
-      delta: -20
-    - type: change_variable
-      key: refugee_pressure
-      delta: -8
-    - type: change_variable
-      key: town_order
-      delta: 4
-    - type: change_relationship
-      source: player
-      target: npc_luo_shoucang
-      path: trust
-      delta: 8
-    - type: add_fact
-      key: luo_released_grain
-      value: true
+  conversationId: conversation_luo_release_grain
 - id: interaction_expose_hidden_grain
   name: 揭露囤粮
   description: 公开罗守仓的暗仓，压低粮价但引发短期混乱。
@@ -419,7 +382,7 @@
 - id: interaction_ask_old_doctor_note
   name: 请教旧庙草药
   description: 请老药师说明旧庙草药残页的来历。
-  type: environment
+  type: conversation
   targetType: npc
   targetId: npc_old_doctor
   cost:
@@ -428,10 +391,8 @@
     all:
       - fact: relationship.player.npc_shen_qinghe.trust
         greater_than_or_equal: 25
-  environmentType: search
+  conversationId: conversation_old_doctor_note
   effects:
-    - type: start_conversation
-      conversationId: conversation_old_doctor_note
     - type: add_fact
       key: old_doctor_revealed_note
       value: true
@@ -444,15 +405,13 @@
 - id: interaction_gather_tavern_rumors
   name: 打听酒肆传闻
   description: 向赵三娘和酒客打听商路、旧庙火案与镇中暗流。
-  type: environment
-  targetType: location
-  targetId: loc_tavern
+  type: conversation
+  targetType: npc
+  targetId: npc_zhao_sanniang
   cost:
     actionPoints: 1
-  environmentType: search
+  conversationId: conversation_zhao_old_case
   effects:
-    - type: start_conversation
-      conversationId: conversation_zhao_old_case
     - type: add_fact
       key: old_case_rumor_heard
       value: true
@@ -467,9 +426,9 @@
 - id: interaction_buy_bandit_info
   name: 购买盗匪情报
   description: 付钱让赵三娘指出黑岭盗与旧庙之间的暗线。
-  type: environment
-  targetType: building
-  targetId: building_tavern_backroom
+  type: conversation
+  targetType: npc
+  targetId: npc_zhao_sanniang
   cost:
     actionPoints: 1
     money: 15
@@ -477,13 +436,8 @@
     all:
       - fact: player.state.money
         greater_than_or_equal: 15
-  environmentType: search
+  conversationId: conversation_zhao_bandit_info
   effects:
-    - type: change_player_attribute
-      attribute: money
-      delta: -15
-    - type: start_conversation
-      conversationId: conversation_zhao_bandit_info
     - type: add_fact
       key: zhao_sold_bandit_info
       value: true
@@ -495,9 +449,9 @@
 - id: interaction_backroom_meeting
   name: 夜间密谈
   description: 夜里进入酒肆后堂，与赵三娘交换更危险的消息。
-  type: environment
-  targetType: building
-  targetId: building_tavern_backroom
+  type: conversation
+  targetType: npc
+  targetId: npc_zhao_sanniang
   cost:
     actionPoints: 1
   conditions:
@@ -506,7 +460,7 @@
         equals: night
       - fact: relationship.player.npc_zhao_sanniang.trust
         greater_than_or_equal: 20
-  environmentType: search
+  conversationId: conversation_zhao_sell_bandit_info
   effects:
     - type: add_fact
       key: tavern_backroom_unlocked
@@ -519,7 +473,7 @@
 - id: interaction_share_clues_with_xu
   name: 与许闻舟交换线索
   description: 与外来书生互换残信、旧档和酒肆传闻。
-  type: environment
+  type: conversation
   targetType: npc
   targetId: npc_xu_wenzhou
   cost:
@@ -528,10 +482,8 @@
     all:
       - fact: facts.xu_showed_letter
         not_equals: true
-  environmentType: search
+  conversationId: conversation_xu_letter
   effects:
-    - type: start_conversation
-      conversationId: conversation_xu_letter
     - type: change_relationship
       source: player
       target: npc_xu_wenzhou
@@ -561,15 +513,13 @@
 - id: interaction_ask_old_case
   name: 询问旧庙火案
   description: 向老祠祝或魏长庚试探旧案。
-  type: environment
-  targetType: location
-  targetId: loc_ancestral_hall
+  type: conversation
+  targetType: npc
+  targetId: npc_old_ritualist
   cost:
     actionPoints: 1
-  environmentType: search
+  conversationId: conversation_ritualist_records
   effects:
-    - type: start_conversation
-      conversationId: conversation_ritualist_records
     - type: add_fact
       key: old_case_rumor_heard
       value: true
@@ -579,9 +529,9 @@
 - id: interaction_unlock_records
   name: 请求开启旧档房
   description: 说服老祠祝或借陆怀山支持打开祠堂旧档房。
-  type: environment
-  targetType: building
-  targetId: building_record_room
+  type: conversation
+  targetType: npc
+  targetId: npc_old_ritualist
   cost:
     actionPoints: 1
   conditions:
@@ -591,21 +541,7 @@
             greater_than_or_equal: 20
           - fact: relationship.player.npc_lu_huaishan.trust
             greater_than_or_equal: 30
-  environmentType: search
-  effects:
-    - type: change_location_state
-      locationId: loc_ancestral_hall
-      path: record_locked
-      value: false
-    - type: change_building_state
-      buildingId: building_record_room
-      path: locked
-      value: false
-    - type: add_fact
-      key: record_room_unlocked
-      value: true
-    - type: trigger_event
-      eventId: event_record_room_unlocked
+  conversationId: conversation_ritualist_unlock_records
 - id: interaction_investigate_records
   name: 调查旧案记录
   description: 查阅旧档房，寻找火案缺页和旧庙名册。
@@ -636,7 +572,7 @@
 - id: interaction_confront_wei
   name: 质问魏长庚
   description: 当面追问魏长庚为何压下旧案记录。
-  type: environment
+  type: conversation
   targetType: npc
   targetId: npc_wei_changgeng
   cost:
@@ -645,10 +581,8 @@
     all:
       - fact: variables.truth_progress
         greater_than_or_equal: 40
-  environmentType: search
+  conversationId: conversation_wei_suppress_truth
   effects:
-    - type: start_conversation
-      conversationId: conversation_wei_suppress_truth
     - type: change_variable
       key: truth_progress
       delta: 5
@@ -663,7 +597,7 @@
 - id: interaction_deal_with_wei
   name: 与镇长交易
   description: 用沉默换取药、粮、巡守或通行便利。
-  type: environment
+  type: conversation
   targetType: npc
   targetId: npc_wei_changgeng
   cost:
@@ -672,10 +606,8 @@
     all:
       - fact: facts.wei_offered_deal
         equals: true
-  environmentType: search
+  conversationId: conversation_wei_deal
   effects:
-    - type: start_conversation
-      conversationId: conversation_wei_deal
     - type: add_fact
       key: player_helped_wei_suppress_truth
       value: true
@@ -989,7 +921,7 @@
 - id: interaction_negotiate_han
   name: 与韩烬谈判
   description: 尝试用旧庙证据或镇中情报与韩烬交易。
-  type: environment
+  type: conversation
   targetType: npc
   targetId: npc_han_jin
   cost:
@@ -998,10 +930,8 @@
     all:
       - fact: facts.old_temple_discovered
         equals: true
-  environmentType: search
+  conversationId: conversation_han_deal
   effects:
-    - type: start_conversation
-      conversationId: conversation_han_deal
     - type: add_fact
       key: player_made_deal_with_han_jin
       value: true

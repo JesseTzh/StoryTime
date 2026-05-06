@@ -5,7 +5,6 @@ import { expect, test } from 'vitest'
 
 function pack(id: string, counts: { locations: number; npcs: number; interactions: number; quests: number; events: number; endings: number }): ContentPack {
   return {
-    gameTitle: id,
     packId: id,
     version: '0.1.0',
     schemaVersion: '1.0.0',
@@ -14,7 +13,6 @@ function pack(id: string, counts: { locations: number; npcs: number; interaction
       name: `${id} world`,
       summary: '',
       editorBackground: 'Editor background.',
-      playerIntroduction: 'Player introduction.',
       maxDays: 7,
       segments: ['morning'],
       actionPointsPerSegment: 2,

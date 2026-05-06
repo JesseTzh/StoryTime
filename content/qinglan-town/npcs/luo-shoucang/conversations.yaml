@@ -286,6 +286,83 @@
             - type: add_fact
               key: conversation_luo_ask_protection_completed
               value: true
+- id: conversation_luo_release_grain
+  npcId: npc_luo_shoucang
+  title: 平价放粮
+  entryNodeId: node_entry
+  conditions:
+    all:
+      - any:
+          - fact: facts.luo_is_hiding_grain
+            equals: true
+          - fact: facts.luo_hidden_grain_found
+            equals: true
+      - fact: facts.luo_released_grain
+        not_equals: true
+  priority: 99
+  nodes:
+    - id: node_entry
+      speaker: npc_luo_shoucang
+      text: 罗守仓守在柜台后，手指按着算盘不动。他看着门外排队的人，说粮一放，镇上未必记他的好，却一定记得他仓里还有粮。
+      replies:
+        - id: reply_release_by_account
+          text: 分批平价卖，账目公开，别让人以为你趁乱施舍。
+          nextNodeId: node_release_account
+        - id: reply_release_by_guard
+          text: 让巡守在门前维持队列，先保住米铺不乱。
+          nextNodeId: node_release_guard
+        - id: reply_release_by_sick
+          text: 先给病户和流民棚留口粮，其他人按户登记。
+          nextNodeId: node_release_sick
+    - id: node_release_account
+      speaker: npc_luo_shoucang
+      text: 他拨了两下算盘，像是在给自己找一条退路。若账能写明，骂声至少不会全砸在门板上。
+      replies:
+        - id: reply_confirm_release_account
+          text: 就按这法子办，粮价先压下来。
+          nextNodeId: node_release_confirm
+    - id: node_release_guard
+      speaker: npc_luo_shoucang
+      text: 他看向门口，终于松开柜台下的锁钥。有人维持队列，他才敢把后仓开一道缝。
+      replies:
+        - id: reply_confirm_release_guard
+          text: 我去招呼巡守，你把米袋备好。
+          nextNodeId: node_release_confirm
+    - id: node_release_sick
+      speaker: npc_luo_shoucang
+      text: 他沉默片刻，低声说病户若先断粮，米铺迟早被怨气堵死。这个账，他认。
+      replies:
+        - id: reply_confirm_release_sick
+          text: 先救最急的人，剩下的再细分。
+          nextNodeId: node_release_confirm
+    - id: node_release_confirm
+      speaker: npc_luo_shoucang
+      text: 后仓门闩响了一声。罗守仓把第一袋米推出来，脸色仍沉，但集市门前的火气终于低了几分。
+      replies:
+        - id: reply_confirm_luo_release_grain
+          text: 这笔账以后再算，今日先让人有饭吃。
+          effects:
+            - type: add_fact
+              key: shen_help_request_seen
+              value: true
+            - type: change_variable
+              key: food_price
+              delta: -20
+            - type: change_variable
+              key: refugee_pressure
+              delta: -8
+            - type: change_variable
+              key: town_order
+              delta: 4
+            - type: change_relationship
+              source: player
+              target: npc_luo_shoucang
+              path: trust
+              delta: 8
+            - type: add_fact
+              key: luo_released_grain
+              value: true
+          endConversation: true
 - id: conversation_luo_low_trust
   npcId: npc_luo_shoucang
   title: 算盘藏锋

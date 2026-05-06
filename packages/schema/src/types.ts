@@ -36,7 +36,6 @@ export type WorldDefinition = {
   name: string
   summary: string
   editorBackground: string
-  playerIntroduction: string
   maxDays: number
   segments: TimeSegment[]
   actionPointsPerSegment: number
@@ -106,7 +105,6 @@ export type Faction = {
 export type PlayerIdentity = {
   id: string
   name: string
-  description: string
   backgroundSummary: string
   intro: {
     title: string
@@ -405,7 +403,6 @@ export type RuntimeConfig = {
 }
 
 export type ContentPack = {
-  gameTitle: string
   packId: string
   version: string
   schemaVersion: string

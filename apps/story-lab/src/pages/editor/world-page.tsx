@@ -91,10 +91,6 @@ export function WorldPage({
                     <strong data-test-id="world-basics-editor-background-label">编辑者世界背景</strong>
                     <p data-test-id="world-basics-editor-background-text">{pack.world.editorBackground}</p>
                   </div>
-                  <div className="world-background-copy" data-test-id="world-basics-player-introduction">
-                    <strong data-test-id="world-basics-player-introduction-label">玩家开场介绍</strong>
-                    <p data-test-id="world-basics-player-introduction-text">{pack.world.playerIntroduction}</p>
-                  </div>
                   <div className="definition-grid" data-test-id="world-basics-definitions">
                     <Definition label="世界 ID" value={pack.world.id} testId="world-basics-world-id" />
                     <Definition label="行动点" value={`${pack.world.actionPointsPerSegment} / 时段`} testId="world-basics-action-points" />
@@ -146,7 +142,6 @@ export function WorldPage({
                       <div key={identity.id} className="identity-tile" data-test-id={`world-identity-${identity.id}`}>
                         <Target size={16} />
                         <strong>{identity.name}</strong>
-                        <small>{identity.description}</small>
                       </div>
                     ))}
                   </div>

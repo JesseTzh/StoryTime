@@ -35,8 +35,7 @@ export function StoryPackSelectPage({ packs, loadingPackId, error, onSelectPack 
                   <div className="story-pack-select-card-meta" data-test-id={`story-pack-select-card-meta-${pack.packId}`}>
                     <Badge data-test-id={`story-pack-select-version-${pack.packId}`}>v{pack.version}</Badge>
                   </div>
-                  <CardTitle data-test-id={`story-pack-select-game-title-${pack.packId}`}>{pack.gameTitle}</CardTitle>
-                  <CardDescription data-test-id={`story-pack-select-world-name-${pack.packId}`}>{pack.worldName}</CardDescription>
+                  <CardTitle data-test-id={`story-pack-select-name-${pack.packId}`}>{pack.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="story-pack-select-card-content" data-test-id={`story-pack-select-card-content-${pack.packId}`}>
                   <p className="story-pack-select-card-summary" data-test-id={`story-pack-select-card-summary-${pack.packId}`}>{pack.summary}</p>

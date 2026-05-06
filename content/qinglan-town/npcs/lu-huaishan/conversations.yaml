@@ -221,6 +221,72 @@
               key: conversation_lu_truth_line_completed
               value: true
           endConversation: true
+- id: conversation_lu_refugee_check
+  npcId: npc_lu_huaishan
+  title: 镇门查验
+  entryNodeId: node_entry
+  conditions:
+    all:
+      - fact: npc.npc_lu_huaishan.state.alive
+        equals: true
+      - fact: facts.player_helped_refugees
+        not_equals: true
+  priority: 98
+  nodes:
+    - id: node_entry
+      speaker: npc_lu_huaishan
+      text: 镇门外排着流民和商旅，木牌、包袱、病色、口音混在一起。陆怀山把名册递给你，低声说，查验不是赶人，是先分清谁该进棚、谁该问话、谁急着看诊。
+      replies:
+        - id: reply_check_route
+          text: 先按来路分队，问清同行人数和路上见闻。
+          nextNodeId: node_route
+        - id: reply_check_sick
+          text: 先把发热和受伤的人分出来，别让人群挤乱。
+          nextNodeId: node_sick
+        - id: reply_check_supplies
+          text: 先核粮袋和住处，免得夜里争抢。
+          nextNodeId: node_supplies
+    - id: node_route
+      speaker: npc_lu_huaishan
+      text: 他点头，让巡守把同路人分到一侧。几个人说起山路岔口时神色发紧，名册上的空白总算有了来处。
+      replies:
+        - id: reply_settle_refugees_by_route
+          text: 名册先这样定，疑处另记，别让好人和坏消息混成一团。
+          nextNodeId: node_settle_confirm
+    - id: node_sick
+      speaker: npc_lu_huaishan
+      text: 他立刻拨出两名巡守维持人墙，又让人去告示棚腾地方。人群里怨声仍有，却不再一窝蜂挤向门洞。
+      replies:
+        - id: reply_settle_refugees_by_sick
+          text: 先救急症，再查来路，镇门不能乱。
+          nextNodeId: node_settle_confirm
+    - id: node_supplies
+      speaker: npc_lu_huaishan
+      text: 他按你的说法重排棚位，把有粮的、断粮的、带幼童的分开登记。争执被压下去，至少今夜不至于先乱在门前。
+      replies:
+        - id: reply_settle_refugees_by_supplies
+          text: 棚位和口粮先记清，明日再逐户核对。
+          nextNodeId: node_settle_confirm
+    - id: node_settle_confirm
+      speaker: npc_lu_huaishan
+      text: 陆怀山收起名册，向门洞外看了一眼。流民棚那边仍旧拥挤，但队伍终于能往前走，巡守也不再只靠吆喝压人。
+      replies:
+        - id: reply_confirm_refugee_settlement
+          text: 今日先稳住门前，后面的账明日再细查。
+          effects:
+            - type: change_variable
+              key: town_order
+              delta: 3
+            - type: change_variable
+              key: refugee_pressure
+              delta: -5
+            - type: change_player_attribute
+              attribute: reputation
+              delta: 4
+            - type: add_fact
+              key: player_helped_refugees
+              value: true
+          endConversation: true
 - id: conversation_lu_low_trust
   npcId: npc_lu_huaishan
   title: 门前疑云

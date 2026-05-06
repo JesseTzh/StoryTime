@@ -24,7 +24,7 @@ This keeps story metadata in content artifacts, keeps client code generic, and a
 
 - `loadContentPackManifest()`: fetches the generated manifest.
 - `loadContentPack(entry)`: fetches a pack JSON by manifest entry `href`.
-- Manifest entry types containing `packId`, `version`, `gameTitle`, `worldName`, `summary`, and `href`.
+- Manifest entry types containing `packId`, `version`, `name`, `summary`, and `href`.
 
 `main.tsx` will render React immediately instead of waiting for a default pack.
 

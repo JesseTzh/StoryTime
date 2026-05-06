@@ -41,7 +41,6 @@ function tile(
 }
 
 const starterPack: ContentPack = {
-  gameTitle: '空白剧情模板',
   packId: 'starter_story_template',
   version: '0.1.0',
   schemaVersion: '1.0.0',
@@ -49,8 +48,7 @@ const starterPack: ContentPack = {
     id: 'world_starter',
     name: '未命名世界',
     summary: '一个可直接复制扩展的基础故事工程，保留最小地图、角色、事件和结局结构。',
-    editorBackground: '供编辑者扩展的空白世界：需要补充时代范围、地理边界、社会秩序、势力结构、民俗规则、超自然边界、叙事基调和禁止突破的设定。',
-    playerIntroduction: '你来到一个尚未命名的故事地点。这里已经出现隐约的冲突，而你的身份、选择和行动会决定它如何展开。',
+    editorBackground: '供编辑者扩展的空白世界：需要补充时代范围、地理边界、社会秩序、势力结构、民俗规则、超自然边界、叙事基调、资源限制和禁止突破的设定。模板默认只有最小地图、一个中立 NPC、基础交互、一个事件和两个结局，适合先验证行动、对话、条件、效果和结局链路，再逐步扩写正式内容。',
     maxDays: 7,
     segments: ['morning', 'noon', 'night'],
     actionPointsPerSegment: 2,
@@ -176,7 +174,6 @@ const starterPack: ContentPack = {
     {
       id: 'identity_observer',
       name: '观察者',
-      description: '适合作为默认玩家身份，能力均衡，便于测试剧情。',
       backgroundSummary: '你以旁观者身份进入故事现场，负责把分散线索串成可行动的判断。',
       intro: {
         title: '观察者入局',
@@ -363,10 +360,6 @@ function folderNameFromPath(path: string) {
   return path.match(/content\/packs\/([^/]+)\.json$/)?.[1] ?? path
 }
 
-function projectName(pack: ContentPack) {
-  return pack.gameTitle === pack.world.name ? pack.gameTitle : `${pack.gameTitle}：${pack.world.name}`
-}
-
 function isContentPack(value: unknown): value is ContentPack {
   return Boolean(value && typeof value === 'object' && 'packId' in value && 'world' in value && 'locations' in value)
 }
@@ -378,7 +371,7 @@ const filesystemProjects: StoryProject[] = Object.entries(contentPackModules)
     const folderName = folderNameFromPath(path)
     return [{
       id: folderName,
-      name: projectName(pack),
+      name: pack.world.name,
       description: pack.world.summary,
       owner: `content/packs/${folderName}.json`,
       status: 'reviewing',

@@ -3,8 +3,7 @@ import type { ContentPack } from '@tss/schema'
 export type ContentPackManifestEntry = {
   packId: string
   version: string
-  gameTitle: string
-  worldName: string
+  name: string
   summary: string
   href: string
 }

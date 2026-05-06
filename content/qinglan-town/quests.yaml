@@ -3,11 +3,10 @@
   description: 陆怀山希望你协助镇门查验与安置流民。
   sourceNpcId: npc_lu_huaishan
   completion:
-    type: environment
-    environmentType: search
-    targetType: location
-    targetId: loc_town_gate
-    interactionId: interaction_help_refugees_gate
+    type: conversation
+    npcId: npc_lu_huaishan
+    conversationId: conversation_lu_refugee_check
+    replyId: reply_confirm_refugee_settlement
   rewardIds:
     - reward_refugee_aid
 - id: quest_support_herb_shop

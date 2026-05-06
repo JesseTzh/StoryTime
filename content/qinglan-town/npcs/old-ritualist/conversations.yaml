@@ -295,6 +295,66 @@
             - type: add_fact
               key: conversation_ritualist_low_trust_completed
               value: true
+- id: conversation_ritualist_unlock_records
+  npcId: npc_old_ritualist
+  title: 开档房
+  entryNodeId: node_entry
+  conditions:
+    all:
+      - any:
+          - fact: relationship.player.npc_old_ritualist.trust
+            greater_than_or_equal: 20
+          - fact: relationship.player.npc_lu_huaishan.trust
+            greater_than_or_equal: 30
+      - fact: facts.record_room_unlocked
+        not_equals: true
+  priority: 98
+  nodes:
+    - id: node_entry
+      speaker: npc_old_ritualist
+      text: 周敬站在档房门前，袖中钥匙碰出轻响。他说，旧档不是不能开，是开了以后，谁都不能装作没看见。
+      replies:
+        - id: reply_unlock_by_trust
+          text: 我不会把旧档当闲话传出去，只按证据查。
+          nextNodeId: node_unlock_trust
+        - id: reply_unlock_by_lu
+          text: 陆怀山也要查这条线，档房不能再锁着。
+          nextNodeId: node_unlock_lu
+    - id: node_unlock_trust
+      speaker: npc_old_ritualist
+      text: 他看了你许久，像是在衡量这句话有几分重量。最后，钥匙从袖中落到掌心。
+      replies:
+        - id: reply_confirm_unlock_by_trust
+          text: 开门吧，旧账要有见证。
+          nextNodeId: node_unlock_confirm
+    - id: node_unlock_lu
+      speaker: npc_old_ritualist
+      text: 听见陆怀山的名字，他叹了一口气。巡守若也愿担这份风险，档房就不该只压在祠堂门内。
+      replies:
+        - id: reply_confirm_unlock_by_lu
+          text: 开门吧，这条线不能断在这里。
+          nextNodeId: node_unlock_confirm
+    - id: node_unlock_confirm
+      speaker: npc_old_ritualist
+      text: 木锁被打开时声音很轻，却像惊动了整间祠堂。旧纸气从门缝里散出来，火案的影子终于有了可查的地方。
+      replies:
+        - id: reply_confirm_unlock_records
+          text: 我会看清楚，也会担住后果。
+          effects:
+            - type: change_location_state
+              locationId: loc_ancestral_hall
+              path: record_locked
+              value: false
+            - type: change_building_state
+              buildingId: building_record_room
+              path: locked
+              value: false
+            - type: add_fact
+              key: record_room_unlocked
+              value: true
+            - type: trigger_event
+              eventId: event_record_room_unlocked
+          endConversation: true
 - id: conversation_old_ritualist_daily_05
   npcId: npc_old_ritualist
   title: 冷糕与归处

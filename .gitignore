@@ -4,6 +4,7 @@ dist
 *.log
 coverage
 .vite
+content/packs/
 
 .DS_Store
 

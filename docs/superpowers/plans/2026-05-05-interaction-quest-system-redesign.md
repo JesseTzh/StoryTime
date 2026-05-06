@@ -447,7 +447,6 @@ import type { ContentPack } from '@tss/schema'
 
 export function makeBaseInteractionPack(): ContentPack {
   return {
-    gameTitle: 'Test Story',
     packId: 'quest_test_pack',
     version: '0.1.0',
     schemaVersion: '0.1.0',
@@ -456,7 +455,6 @@ export function makeBaseInteractionPack(): ContentPack {
       name: 'Test World',
       summary: 'A test world.',
       editorBackground: 'Editor background.',
-      playerIntroduction: 'Player introduction.',
       maxDays: 3,
       segments: ['morning', 'noon', 'night'],
       actionPointsPerSegment: 3,

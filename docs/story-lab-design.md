@@ -78,7 +78,7 @@ content
 用于定义一个故事包的基础信息、世界设定和时间系统。制作期不再单独维护 `story.yaml`。
 
 ```yaml
-gameTitle: 示例故事
+name: 示例故事
 packId: sample_story
 version: 0.1.0
 schemaVersion: 1.0.0
