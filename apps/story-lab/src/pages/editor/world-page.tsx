@@ -146,7 +146,6 @@ export function WorldPage({
                       <div key={identity.id} className="identity-tile" data-test-id={`world-identity-${identity.id}`}>
                         <Target size={16} />
                         <strong>{identity.name}</strong>
-                        <small>{identity.description}</small>
                       </div>
                     ))}
                   </div>

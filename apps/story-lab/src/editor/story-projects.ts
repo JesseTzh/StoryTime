@@ -41,7 +41,6 @@ function tile(
 }
 
 const starterPack: ContentPack = {
-  gameTitle: '空白剧情模板',
   packId: 'starter_story_template',
   version: '0.1.0',
   schemaVersion: '1.0.0',
@@ -176,7 +175,6 @@ const starterPack: ContentPack = {
     {
       id: 'identity_observer',
       name: '观察者',
-      description: '适合作为默认玩家身份，能力均衡，便于测试剧情。',
       backgroundSummary: '你以旁观者身份进入故事现场，负责把分散线索串成可行动的判断。',
       intro: {
         title: '观察者入局',
@@ -363,10 +361,6 @@ function folderNameFromPath(path: string) {
   return path.match(/content\/packs\/([^/]+)\.json$/)?.[1] ?? path
 }
 
-function projectName(pack: ContentPack) {
-  return pack.gameTitle === pack.world.name ? pack.gameTitle : `${pack.gameTitle}：${pack.world.name}`
-}
-
 function isContentPack(value: unknown): value is ContentPack {
   return Boolean(value && typeof value === 'object' && 'packId' in value && 'world' in value && 'locations' in value)
 }
@@ -378,7 +372,7 @@ const filesystemProjects: StoryProject[] = Object.entries(contentPackModules)
     const folderName = folderNameFromPath(path)
     return [{
       id: folderName,
-      name: projectName(pack),
+      name: pack.world.name,
       description: pack.world.summary,
       owner: `content/packs/${folderName}.json`,
       status: 'reviewing',

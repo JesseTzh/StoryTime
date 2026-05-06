@@ -106,7 +106,6 @@ export type Faction = {
 export type PlayerIdentity = {
   id: string
   name: string
-  description: string
   backgroundSummary: string
   intro: {
     title: string
@@ -405,7 +404,6 @@ export type RuntimeConfig = {
 }
 
 export type ContentPack = {
-  gameTitle: string
   packId: string
   version: string
   schemaVersion: string

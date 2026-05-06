@@ -5,7 +5,6 @@ import { buildContentIndex } from './content-index'
 const pack = {
   packId: 'pack_fixture',
   version: '1.0.0',
-  gameTitle: 'Fixture',
   schemaVersion: '1.0.0',
   world: {
     id: 'world_fixture',

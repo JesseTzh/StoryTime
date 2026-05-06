@@ -1,6 +1,5 @@
 - id: identity_runner
   name: 送信人
-  description: 熟悉短途山路，擅长与路边驿站打交道。
   backgroundSummary: 你带着一封急信经过驿站，却被雾灯失准的消息暂时留住。
   intro:
     title: 雾起之前

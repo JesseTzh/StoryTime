@@ -2,7 +2,6 @@ import type { ContentPack } from '@tss/schema'
 
 export function makeBaseInteractionPack(): ContentPack {
   return {
-    gameTitle: 'Test Story',
     packId: 'test_pack',
     version: '0.0.0',
     schemaVersion: '2.0.0',
@@ -81,7 +80,6 @@ export function makeBaseInteractionPack(): ContentPack {
       {
         id: 'identity_test',
         name: 'Test Identity',
-        description: 'A runtime test identity.',
         backgroundSummary: 'Runtime test background.',
         intro: {
           title: 'Runtime Test',

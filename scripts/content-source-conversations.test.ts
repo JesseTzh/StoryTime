@@ -19,7 +19,6 @@ test('content artifacts include browser-loadable static JSON for multiple packs'
   const tempDir = await mkdtemp(join(tmpdir(), 'content-artifacts-'))
   try {
     const packA = {
-      gameTitle: 'Fixture',
       packId: 'pack_fixture',
       version: '1.0.0',
       schemaVersion: '1.0.0',
@@ -52,7 +51,6 @@ test('content artifacts include browser-loadable static JSON for multiple packs'
     } as unknown as ContentPack
     const packB = {
       ...packA,
-      gameTitle: 'Second Fixture',
       packId: 'pack_second',
       version: '2.0.0',
       world: {
@@ -84,8 +82,8 @@ test('content artifacts include browser-loadable static JSON for multiple packs'
 test('content artifact generation preserves an existing default pack when it is still present', async () => {
   const tempDir = await mkdtemp(join(tmpdir(), 'content-artifacts-default-'))
   try {
-    const packA = makeArtifactPack('pack_fixture', 'Fixture', 'Fixture World')
-    const packB = makeArtifactPack('pack_second', 'Second Fixture', 'Second World')
+    const packA = makeArtifactPack('pack_fixture', 'Fixture World')
+    const packB = makeArtifactPack('pack_second', 'Second World')
     const contentPackDir = join(tempDir, 'content', 'packs')
     await mkdir(contentPackDir, { recursive: true })
     await writeFile(join(contentPackDir, 'manifest.json'), `${JSON.stringify({
@@ -110,7 +108,6 @@ test('content source loads pack metadata from world yaml', async () => {
 
     const pack = await loadContentPackFromSource(sourceDir)
 
-    expect(pack.gameTitle).toBe('Merged Metadata Story')
     expect(pack.packId).toBe('merged_metadata_story')
     expect(pack.version).toBe('0.1.0')
     expect(pack.schemaVersion).toBe('1.0.0')
@@ -160,8 +157,7 @@ test('content source discovery ignores generated pack artifacts', async () => {
 
 async function writeMinimalMergedWorldContentSource(sourceDir: string) {
   await mkdir(join(sourceDir, 'npcs', 'guide'), { recursive: true })
-  await writeFile(join(sourceDir, 'world.yaml'), `gameTitle: Merged Metadata Story
-packId: merged_metadata_story
+  await writeFile(join(sourceDir, 'world.yaml'), `packId: merged_metadata_story
 version: 0.1.0
 schemaVersion: 1.0.0
 id: world_merged
@@ -242,18 +238,17 @@ behaviorRules: []
   await writeFile(join(sourceDir, 'npcs', 'guide', 'conversations.yaml'), `[]\n`)
 }
 
-function makeArtifactPack(packId: string, gameTitle: string, worldName: string): ContentPack {
+function makeArtifactPack(packId: string, name: string): ContentPack {
   return {
-    gameTitle,
     packId,
     version: '1.0.0',
     schemaVersion: '1.0.0',
     world: {
       id: `world_${packId}`,
-      name: worldName,
-      summary: `${worldName} summary`,
-      editorBackground: `${worldName} editor background`,
-      playerIntroduction: `${worldName} player introduction`,
+      name,
+      summary: `${name} summary`,
+      editorBackground: `${name} editor background`,
+      playerIntroduction: `${name} player introduction`,
       maxDays: 1,
       segments: ['morning'],
       actionPointsPerSegment: 1,

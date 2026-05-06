@@ -101,7 +101,18 @@
   margin-top: 3rem;
 }
 
-.identity-kicker,
+.identity-kicker {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 20;
+  margin: 0;
+  color: rgba(224, 181, 98, 0.85);
+  font-size: 0.875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
 .story-pack-select-kicker {
   margin: 0 0 0.75rem;
   color: rgba(224, 181, 98, 0.85);

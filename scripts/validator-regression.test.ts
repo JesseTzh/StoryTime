@@ -355,7 +355,6 @@ test('validator requires world background fields for editors and players', () =>
 
 function makeValidationPack(): ContentPack {
   return clonePack({
-    gameTitle: 'Test Story',
     packId: 'pack_test',
     version: '0.1.0',
     schemaVersion: '0.1.0',
@@ -430,7 +429,6 @@ function makeValidationPack(): ContentPack {
       {
         id: 'identity_test',
         name: 'Test Identity',
-        description: 'A test identity.',
         backgroundSummary: 'A short playable background.',
         intro: {
           title: 'Arriving at the Test World',

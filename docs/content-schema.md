@@ -6,7 +6,6 @@
 
 ```ts
 type ContentPack = {
-  gameTitle: string
   packId: string
   version: string
   schemaVersion: string

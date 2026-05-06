@@ -80,7 +80,6 @@ test('conversation reply can complete an active conversation quest', () => {
 
 function makeConversationPack(): ContentPack {
   return {
-    gameTitle: 'Test Story',
     packId: 'pack_test',
     version: '0.1.0',
     schemaVersion: '0.1.0',
@@ -145,7 +144,6 @@ function makeConversationPack(): ContentPack {
       {
         id: 'identity_test',
         name: 'Test Identity',
-        description: 'A test identity.',
         backgroundSummary: 'A test identity background.',
         intro: {
           title: 'Test Identity',

@@ -5,7 +5,6 @@ import { loadContentPack, loadContentPackManifest, type ContentPackManifest } fr
 const pack = {
   packId: 'pack_fixture',
   version: '1.0.0',
-  gameTitle: 'Fixture',
   schemaVersion: '1.0.0',
   world: {
     id: 'world_fixture',
@@ -41,16 +40,14 @@ const manifest = {
     {
       packId: 'pack_other',
       version: '0.1.0',
-      gameTitle: 'Other Fixture',
-      worldName: 'Other World',
+      name: 'Other World',
       summary: 'Other summary',
       href: '/content-packs/pack_other.json',
     },
     {
       packId: pack.packId,
       version: pack.version,
-      gameTitle: pack.gameTitle,
-      worldName: pack.world.name,
+      name: pack.world.name,
       summary: pack.world.summary,
       href: '/content-packs/pack_fixture.json',
     },

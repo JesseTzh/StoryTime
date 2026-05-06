@@ -1,6 +1,5 @@
 # YAML 兼容 JSON 格式，可直接由制作工具解析
 {
-  "gameTitle": "时空故事",
   "packId": "qinglan_town_mvp",
   "version": "0.2.0",
   "schemaVersion": "1.0.0",

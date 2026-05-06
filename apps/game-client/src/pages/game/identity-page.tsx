@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useGameStore } from '@/store/game-store'
 
 export function IdentityPage() {
@@ -12,7 +12,7 @@ export function IdentityPage() {
       <div className="identity-page-inner" data-test-id="identity-page-inner">
         <div className="identity-hero" data-test-id="identity-hero">
           <p className="identity-kicker" data-test-id="identity-kicker">TIME · SPACE · STORY</p>
-          <h1 className="identity-title" data-test-id="identity-title">{pack.gameTitle}</h1>
+          <h1 className="identity-title" data-test-id="identity-title">{pack.world.name}</h1>
           <p className="identity-summary" data-test-id="identity-summary">{pack.world.summary}</p>
           <p className="identity-world-introduction" data-test-id="identity-world-introduction">{pack.world.playerIntroduction}</p>
         </div>
@@ -21,7 +21,6 @@ export function IdentityPage() {
             <Card key={identity.id} className="identity-card" data-test-id={`identity-card-${identity.id}`}>
               <CardHeader data-test-id={`identity-card-header-${identity.id}`}>
                 <CardTitle data-test-id={`identity-name-${identity.id}`}>{identity.name}</CardTitle>
-                <CardDescription data-test-id={`identity-description-${identity.id}`}>{identity.description}</CardDescription>
                 <p className="identity-background-summary" data-test-id={`identity-background-summary-${identity.id}`}>{identity.backgroundSummary}</p>
               </CardHeader>
               <CardContent className="identity-card-content space-y-4" data-test-id={`identity-card-content-${identity.id}`}>

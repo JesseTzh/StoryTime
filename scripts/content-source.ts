@@ -10,7 +10,7 @@ export const repoRoot = resolve(scriptsDir, '..')
 export const defaultContentRoot = resolve(repoRoot, 'content')
 export const defaultContentPackDir = resolve(defaultContentRoot, 'packs')
 
-type WorldSource = Pick<ContentPack, 'gameTitle' | 'packId' | 'version' | 'schemaVersion'> & ContentPack['world']
+type WorldSource = Pick<ContentPack, 'packId' | 'version' | 'schemaVersion'> & ContentPack['world']
 
 type NpcIndexEntry = {
   id: string
@@ -66,9 +66,8 @@ export async function loadContentPackFromSource(contentDir?: string): Promise<Co
     loadNpcContent(resolvedContentDir),
   ])
 
-  const { gameTitle, packId, version, schemaVersion, ...world } = worldSource
+  const { packId, version, schemaVersion, ...world } = worldSource
   return {
-    gameTitle,
     packId,
     version,
     schemaVersion,
@@ -118,8 +117,7 @@ export async function writeContentPackArtifacts(
     packs: packs.map((pack) => ({
         packId: pack.packId,
         version: pack.version,
-        gameTitle: pack.gameTitle,
-        worldName: pack.world.name,
+        name: pack.world.name,
         summary: pack.world.summary,
         href: `/content-packs/${pack.packId}.json`,
       })),

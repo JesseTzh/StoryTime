@@ -6,7 +6,6 @@ import { buildScheduleEventOverview } from '../apps/story-lab/src/editor/schedul
 
 function pack(): ContentPack {
   return {
-    gameTitle: 'Test Story',
     packId: 'test-story',
     version: '0.1.0',
     schemaVersion: '1.0.0',
