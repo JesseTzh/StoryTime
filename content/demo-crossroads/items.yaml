@@ -10,7 +10,3 @@
   name: 夜灰灯芯
   type: quest
   description: 夜里从旧灯芯灰中拈出的细芯，触感像一截冷掉的脉搏。
-- id: item_sealed_lamp_box
-  name: 封灯匣
-  type: quest
-  description: 装入晨镜盐、正午影线和夜灰灯芯的小匣，是点亮雾灯前必须交给守灯人的任务物品。

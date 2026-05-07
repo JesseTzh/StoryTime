@@ -23,14 +23,14 @@ schedule:
   - id: guide_schedule_day2
     segment: morning
     locationId: loc_crossroads
-    activity: 等玩家交付封灯匣
+    activity: 等守约的玩家来见证雾灯开路
     dayRange:
       from: 2
       to: 2
   - id: guide_schedule_day2_noon
     segment: noon
     locationId: loc_crossroads
-    activity: 检查封灯匣铜扣是否仍有人的温度
+    activity: 站在雾灯旁确认三件封灯物已经入火
     dayRange:
       from: 2
       to: 2

@@ -13,7 +13,7 @@
       delta: 5
   followupEventIds: []
 - id: event_morning_salt_taken
-  name: 晨镜盐入匣
+  name: 晨镜盐入手
   type: location_event
   locationId: loc_crossroads
   participantIds:
@@ -28,7 +28,7 @@
       delta: -5
   followupEventIds: []
 - id: event_noon_shadow_bound
-  name: 正午影线缠扣
+  name: 正午影线缠定
   type: location_event
   locationId: loc_crossroads
   participantIds:
@@ -43,7 +43,7 @@
       delta: 5
   followupEventIds: []
 - id: event_night_wick_sealed
-  name: 夜灰灯芯封匣
+  name: 夜灰灯芯入手
   type: location_event
   locationId: loc_crossroads
   participantIds:
@@ -51,11 +51,38 @@
   trigger:
     fact: facts.ritual_night_done
     equals: true
-  description: 封灯匣合上的一刻，雾里所有声音都改成了你的嗓音，随后又像被门关在外面。
+  description: 夜灰灯芯被拈起时，雾里所有声音都改成了你的嗓音，随后又像被门关在外面。
   effects:
     - type: change_variable
       key: fog_pressure
       delta: -10
+  followupEventIds: []
+- id: event_shen_plan_succeeded
+  name: 沈灯计谋得逞
+  type: world_state_event
+  participantIds:
+    - npc_guide
+  trigger:
+    all:
+      - fact: time.day
+        greater_than_or_equal: 2
+      - fact: facts.guide_briefed
+        equals: true
+      - fact: facts.lamp_materials_delivered
+        exists: false
+      - fact: facts.shen_plan_succeeded
+        exists: false
+  description: 第一夜已经过去，三件封灯物没有交到沈灯手中。门口木牌上的旧名字被雾泡软，只等新的名字刻上去。
+  effects:
+    - type: add_fact
+      key: shen_plan_succeeded
+      value: true
+    - type: change_variable
+      key: fog_pressure
+      delta: 20
+    - type: change_variable
+      key: rule_integrity
+      delta: -20
   followupEventIds: []
 - id: event_keeper_replaced
   name: 新守灯人
@@ -70,12 +97,12 @@
         equals: night
       - fact: facts.lamp_lit
         exists: false
+      - fact: facts.player_became_keeper
+        exists: false
   description: 第二天夜里，雾灯仍未亮起。旧守灯人的身影被雾擦掉，灯室门后只剩你的影子。
   effects:
     - type: fail_quest
       questId: quest_prepare_lamp_rite
-    - type: fail_quest
-      questId: quest_deliver_lamp_box
     - type: fail_quest
       questId: quest_light_fog_lamp
     - type: add_fact

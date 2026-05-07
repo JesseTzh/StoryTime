@@ -6,9 +6,8 @@
     lamp_ready: false
     door_mark_count: 3
   descriptions:
-    default: 小屋里挂着铜镜、旧灯芯、黑线和一只封灯匣。墙上写着三条规则，最后一行被潮气泡得像还在呼吸。
+    default: 小屋里挂着铜镜、旧灯芯和一束被钉直的黑线。墙上写着三条规则，最后一行被潮气泡得像还在呼吸。
   interactionIds:
     - interaction_morning_mirror
     - interaction_noon_shadow
     - interaction_night_wick
-    - interaction_light_fog_lamp

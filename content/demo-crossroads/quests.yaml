@@ -1,6 +1,6 @@
 - id: quest_prepare_lamp_rite
-  title: 收齐三件封灯物
-  description: 依照守灯人的指引，在第一天早晨、正午、夜晚分别取得晨镜盐、正午影线和夜灰灯芯，凑齐封灯匣。
+  title: 第一夜交付三件封灯物
+  description: 依照沈灯的指引，在第一天早晨、正午、夜晚分别取得晨镜盐、正午影线和夜灰灯芯，并在第一天夜里交给沈灯。
   sourceNpcId: npc_guide
   conditions:
     fact: facts.guide_briefed
@@ -8,7 +8,7 @@
   objectives:
     - id: objective_rules_received
       title: 问清离开的办法
-      description: 开局先听完守灯人说明，知道雾灯需要哪些封灯物才能重新亮起。
+      description: 开局先听完沈灯说明，知道雾灯需要哪些封灯物才能重新亮起。
       conditions:
         fact: facts.guide_briefed
         equals: true
@@ -16,77 +16,57 @@
       title: 取得晨镜盐
       description: 在第一天早晨背灯擦镜，取得晨镜盐。
       conditions:
-        fact: player.inventory.item_mirror_salt
-        greater_than_or_equal: 1
+        fact: facts.ritual_morning_done
+        equals: true
     - id: objective_noon_shadow
       title: 取得正午影线
       description: 在第一天正午量定灯架影线，取得正午影线。
       conditions:
-        fact: player.inventory.item_shadow_thread
-        greater_than_or_equal: 1
+        fact: facts.ritual_noon_done
+        equals: true
     - id: objective_night_wick
       title: 取得夜灰灯芯
-      description: 在第一天夜晚从旧灯芯灰里取出夜灰灯芯，让封灯匣合上。
+      description: 在第一天夜晚从旧灯芯灰里取出夜灰灯芯。
       conditions:
-        all:
-          - fact: player.inventory.item_ashen_wick
-            greater_than_or_equal: 1
-          - fact: player.inventory.item_sealed_lamp_box
-            greater_than_or_equal: 1
-  completion:
-    type: environment
-    environmentType: search
-    targetType: building
-    targetId: building_lamp_room
-    interactionId: interaction_night_wick
-  rewardIds:
-    - reward_rite_prepared
-- id: quest_deliver_lamp_box
-  title: 次日交付封灯匣
-  description: 第二天再次与守灯人确认封灯物，并把封灯匣交给他。
-  sourceNpcId: npc_guide
-  conditions:
-    fact: facts.sealed_lamp_box_ready
-    equals: true
-  objectives:
-    - id: objective_return_next_day
-      title: 第二天回到守灯人身边
-      description: 必须等到第二天，雾才会承认封灯匣仍属于人间。
+        fact: facts.ritual_night_done
+        equals: true
+    - id: objective_offer_materials
+      title: 第一夜交给沈灯
+      description: 必须在第一天夜里把三件封灯物交给沈灯。
       conditions:
-        fact: time.day
-        greater_than_or_equal: 2
-    - id: objective_deliver_box
-      title: 交付封灯匣
-      description: 把封灯匣交给守灯人。
-      conditions:
-        fact: facts.lamp_box_delivered
+        fact: facts.lamp_materials_delivered
         equals: true
   completion:
     type: conversation
     npcId: npc_guide
-    conversationId: conversation_lamp_box_handoff
-    replyId: reply_deliver_lamp_box
+    conversationId: conversation_lamp_offering
+    replyId: reply_offer_lamp_materials
   rewardIds:
-    - reward_lamp_box_accepted
+    - reward_rite_prepared
 - id: quest_light_fog_lamp
-  title: 点亮雾灯离开驿站
-  description: 守灯人验过封灯匣后，点亮雾灯才能离开驿站。
+  title: 第二天由沈灯开启雾灯
+  description: 第一夜交付三件封灯物后，第二天再与沈灯对话，让他为你开启雾灯。
   sourceNpcId: npc_guide
   conditions:
-    fact: quests.quest_deliver_lamp_box.status
-    equals: completed
+    fact: facts.lamp_materials_delivered
+    equals: true
   objectives:
-    - id: objective_light_lamp
-      title: 点亮雾灯
-      description: 在第二天夜幕降临前完成最后点灯。
+    - id: objective_return_next_day
+      title: 第二天回到沈灯身边
+      description: 沈灯需要等到第二天确认雾灯认路，才会替你开灯。
+      conditions:
+        fact: time.day
+        greater_than_or_equal: 2
+    - id: objective_lamp_opened
+      title: 沈灯开启雾灯
+      description: 与沈灯确认三件封灯物已经入火，等待雾灯亮起。
       conditions:
         fact: facts.lamp_lit
         equals: true
   completion:
-    type: environment
-    environmentType: search
-    targetType: building
-    targetId: building_lamp_room
-    interactionId: interaction_light_fog_lamp
+    type: conversation
+    npcId: npc_guide
+    conversationId: conversation_second_day_lamp_opening
+    replyId: reply_accept_lamp_opening
   rewardIds:
     - reward_station_left

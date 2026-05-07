@@ -26,7 +26,7 @@
           nextNodeId: node_rules
     - id: node_rules
       speaker: npc_guide
-      text: 第一，晨时擦镜，不看镜里多出来的脸。第二，正午定影，不踩第十三根影线。第三，夜里封芯，听见自己的名字也不要应。三样都做完，封灯匣会自己合上。
+      text: 第一，晨时擦镜，不看镜里多出来的脸。第二，正午定影，不踩第十三根影线。第三，夜里封芯，听见自己的名字也不要应。三样都拿到以后，必须在今夜交到我手里。
       replies:
         - id: reply_accept_rules
           text: 我照你说的做。
@@ -44,7 +44,7 @@
               delta: 5
 - id: conversation_prepare_lamp_reminder
   npcId: npc_guide
-  title: 封灯匣之前
+  title: 三件封灯物之前
   entryNodeId: node_prepare_lamp_reminder
   priority: 15
   conditions:
@@ -53,16 +53,64 @@
         equals: true
       - fact: time.day
         equals: 1
-      - fact: facts.sealed_lamp_box_ready
+      - fact: facts.lamp_materials_delivered
         exists: false
   nodes:
     - id: node_prepare_lamp_reminder
       speaker: npc_guide
-      text: 离开的办法已经告诉你了。先把三件封灯物收齐，等封灯匣自己合上，明天再拿来找我。路不会提前认人，雾也不会。
+      text: 离开的办法已经告诉你了。晨镜盐、正午影线、夜灰灯芯，三样都要在今夜交给我。过了今夜，雾就不认你的手了。
       replies:
         - id: reply_prepare_lamp_ack
-          text: 我会带着封灯匣回来。
+          text: 我会在夜里带齐三件东西回来。
           endConversation: true
+- id: conversation_lamp_offering
+  npcId: npc_guide
+  title: 第一夜交付封灯物
+  entryNodeId: node_lamp_offering
+  priority: 40
+  conditions:
+    all:
+      - fact: time.day
+        equals: 1
+      - fact: time.segment
+        equals: night
+      - fact: facts.lamp_materials_delivered
+        exists: false
+      - fact: player.inventory.item_mirror_salt
+        greater_than_or_equal: 1
+      - fact: player.inventory.item_shadow_thread
+        greater_than_or_equal: 1
+      - fact: player.inventory.item_ashen_wick
+        greater_than_or_equal: 1
+  nodes:
+    - id: node_lamp_offering
+      speaker: npc_guide
+      text: 你竟然按时带齐了。把盐、影线和灯芯放到灯盏前，不要多问，也不要让雾听见你松气。
+      replies:
+        - id: reply_offer_lamp_materials
+          text: 我把三件封灯物交给你。
+          endConversation: true
+          effects:
+            - type: remove_item
+              itemId: item_mirror_salt
+              count: 1
+            - type: remove_item
+              itemId: item_shadow_thread
+              count: 1
+            - type: remove_item
+              itemId: item_ashen_wick
+              count: 1
+            - type: add_fact
+              key: lamp_materials_delivered
+              value: true
+            - type: add_fact
+              key: handoff_confirmed
+              value: true
+            - type: change_relationship
+              source: player
+              target: npc_guide
+              path: trust
+              delta: 15
 - id: conversation_morning_rite_failed
   npcId: npc_guide
   title: 晨镜盐已失
@@ -74,6 +122,8 @@
         equals: 2
       - fact: facts.ritual_morning_failed
         equals: true
+      - fact: facts.lamp_materials_delivered
+        exists: false
   nodes:
     - id: node_morning_failed
       speaker: npc_guide
@@ -93,10 +143,12 @@
         equals: 2
       - fact: facts.ritual_noon_failed
         equals: true
+      - fact: facts.lamp_materials_delivered
+        exists: false
   nodes:
     - id: node_noon_failed
       speaker: npc_guide
-      text: 影线只在正午肯站直。你动手时它已经斜了，缠进铜扣里的不是路影，是雾影；这样的线，封不住灯。
+      text: 影线只在正午肯站直。你动手时它已经斜了，带回来的不是路影，是雾影；这样的线，封不住灯。
       replies:
         - id: reply_noon_failed_ack
           text: 正午影线已经不能用了。
@@ -112,6 +164,8 @@
         equals: 2
       - fact: facts.ritual_night_failed
         equals: true
+      - fact: facts.lamp_materials_delivered
+        exists: false
   nodes:
     - id: node_night_failed
       speaker: npc_guide
@@ -120,61 +174,74 @@
         - id: reply_night_failed_ack
           text: 夜灰灯芯已经失效了。
           endConversation: true
-- id: conversation_lamp_box_handoff
+- id: conversation_second_day_lamp_opening
   npcId: npc_guide
-  title: 交付前确认
-  entryNodeId: node_handoff
-  priority: 30
+  title: 沈灯开灯
+  entryNodeId: node_lamp_opening
+  priority: 45
   conditions:
     all:
       - fact: time.day
         equals: 2
-      - fact: facts.sealed_lamp_box_ready
+      - fact: facts.lamp_materials_delivered
         equals: true
-      - fact: facts.lamp_box_delivered
-        exists: false
-  nodes:
-    - id: node_handoff
-      speaker: npc_guide
-      text: 你带回来了。别打开匣子，只把它递给我。若里面少了任意一样，雾会用你的影子补上。
-      replies:
-        - id: reply_deliver_lamp_box
-          text: 我把封灯匣交给你。
-          itemCost:
-            itemId: item_sealed_lamp_box
-            itemCount: 1
-          endConversation: true
-          effects:
-            - type: add_fact
-              key: lamp_box_delivered
-              value: true
-            - type: add_fact
-              key: handoff_confirmed
-              value: true
-            - type: change_relationship
-              source: player
-              target: npc_guide
-              path: trust
-              delta: 15
-- id: conversation_after_delivery
-  npcId: npc_guide
-  title: 最后一盏灯
-  entryNodeId: node_after_delivery
-  priority: 25
-  conditions:
-    all:
-      - fact: quests.quest_deliver_lamp_box.status
-        equals: completed
       - fact: facts.lamp_lit
         exists: false
   nodes:
-    - id: node_after_delivery
+    - id: node_lamp_opening
       speaker: npc_guide
-      text: 灯芯认得你了。现在去点灯，别等到夜里。夜一到，驿站要的就不是灯油，而是守灯人。
+      text: 谢谢你按时回来。盐记住了你的影子，影线绑住了路，灯芯还认人的气息。现在我替你开灯，雾会放你走。
       replies:
-        - id: reply_go_light_lamp
-          text: 我现在去点亮雾灯。
+        - id: reply_accept_lamp_opening
+          text: 请为我开启雾灯。
           endConversation: true
+          effects:
+            - type: add_fact
+              key: lamp_lit
+              value: true
+            - type: add_fact
+              key: station_left
+              value: true
+            - type: change_variable
+              key: lamp_readiness
+              delta: 20
+            - type: change_variable
+              key: fog_pressure
+              delta: -35
+- id: conversation_shen_plan_revealed
+  npcId: npc_guide
+  title: 沈灯的计谋
+  entryNodeId: node_plan_revealed
+  priority: 50
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: facts.shen_plan_succeeded
+        equals: true
+      - fact: facts.player_became_keeper
+        exists: false
+  nodes:
+    - id: node_plan_revealed
+      speaker: npc_guide
+      text: 你没有在昨夜把三件东西交给我。雾只要一个守灯人，我等这一夜已经等了很久。现在木牌会记你的名字，而我的脚步终于能离开门槛。
+      replies:
+        - id: reply_accept_keeper_fate
+          text: 原来这才是你的办法。
+          endConversation: true
+          effects:
+            - type: fail_quest
+              questId: quest_prepare_lamp_rite
+            - type: fail_quest
+              questId: quest_light_fog_lamp
+            - type: add_fact
+              key: player_became_keeper
+              value: true
+            - type: change_player_attribute
+              attribute: reputation
+              delta: -5
+            - type: trigger_ending
+              endingId: ending_new_lamp_keeper
 - id: conversation_lamp_lit
   npcId: npc_guide
   title: 离站之前

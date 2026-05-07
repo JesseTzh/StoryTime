@@ -2,7 +2,8 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { ContentPack } from '@tss/schema'
-import { discoverContentSourceDirs, loadContentPackFromSource, writeContentPackArtifacts } from './content-source'
+import { advanceTimeSegment, chooseConversationReply, createInitialRuntimeState, executeInteraction, getAvailableConversationsForNpc, processEvents, startConversation } from '@tss/engine'
+import { discoverContentSourceDirs, loadContentPackFromSource, repoRoot, writeContentPackArtifacts } from './content-source'
 import { expect, test } from 'vitest'
 
 test('content source emits conversations and no legacy dialogue effects', async () => {
@@ -13,6 +14,77 @@ test('content source emits conversations and no legacy dialogue effects', async 
   expect('dialogues' in pack).toBe(false)
   expect(serialized).not.toContain('start_dialogue')
   expect(pack.conversations.every((conversation) => conversation.title.trim().length > 0)).toBe(true)
+})
+
+test('demo crossroads uses first-night direct offering instead of sealed lamp box handoff', async () => {
+  const pack = await loadContentPackFromSource(join(repoRoot, 'content', 'demo-crossroads'))
+  const serialized = JSON.stringify(pack)
+  const firstQuest = pack.quests.find((quest) => quest.id === 'quest_prepare_lamp_rite')
+  const offeringConversation = pack.conversations.find((conversation) => conversation.id === 'conversation_lamp_offering')
+  const offeringReply = offeringConversation?.nodes.flatMap((node) => node.replies).find((reply) => reply.id === 'reply_offer_lamp_materials')
+
+  expect(pack.items.some((item) => item.id === 'item_sealed_lamp_box')).toBe(false)
+  expect(serialized).not.toContain('封灯匣')
+  expect(serialized).not.toContain('sealed_lamp_box')
+  expect(serialized).not.toContain('lamp_box')
+  expect(firstQuest?.completion).toMatchObject({
+    type: 'conversation',
+    npcId: 'npc_guide',
+    conversationId: 'conversation_lamp_offering',
+    replyId: 'reply_offer_lamp_materials',
+  })
+  expect(offeringConversation?.conditions).toMatchObject({
+    all: expect.arrayContaining([
+      { fact: 'time.day', equals: 1 },
+      { fact: 'time.segment', equals: 'night' },
+      { fact: 'player.inventory.item_mirror_salt', greater_than_or_equal: 1 },
+      { fact: 'player.inventory.item_shadow_thread', greater_than_or_equal: 1 },
+      { fact: 'player.inventory.item_ashen_wick', greater_than_or_equal: 1 },
+    ]),
+  })
+  expect(offeringReply?.effects).toEqual(expect.arrayContaining([
+    { type: 'remove_item', itemId: 'item_mirror_salt', count: 1 },
+    { type: 'remove_item', itemId: 'item_shadow_thread', count: 1 },
+    { type: 'remove_item', itemId: 'item_ashen_wick', count: 1 },
+    { type: 'add_fact', key: 'lamp_materials_delivered', value: true },
+  ]))
+})
+
+test('demo crossroads completes by first-night offering and second-day lamp opening', async () => {
+  const pack = await loadContentPackFromSource(join(repoRoot, 'content', 'demo-crossroads'))
+  let state = createInitialRuntimeState(pack, pack.identities[0].id)
+
+  state = startConversation(pack, state, 'conversation_keeper_rules').state
+  state = chooseConversationReply(pack, state, 'reply_ask_rules').state
+  state = chooseConversationReply(pack, state, 'reply_ask_how').state
+  state = chooseConversationReply(pack, state, 'reply_accept_rules').state
+  state = processEvents(pack, state).state
+
+  state = executeInteraction(pack, state, 'interaction_morning_mirror').state
+  state = advanceTimeSegment(pack, state).state
+  state = executeInteraction(pack, state, 'interaction_noon_shadow').state
+  state = advanceTimeSegment(pack, state).state
+  state = executeInteraction(pack, state, 'interaction_night_wick').state
+  state = processEvents(pack, state).state
+
+  expect(getAvailableConversationsForNpc(pack, state, 'npc_guide').map((entry) => entry.conversation.id)).toContain('conversation_lamp_offering')
+
+  state = startConversation(pack, state, 'conversation_lamp_offering').state
+  state = chooseConversationReply(pack, state, 'reply_offer_lamp_materials').state
+
+  expect(state.worldState.quests.quest_prepare_lamp_rite?.status).toBe('completed')
+  expect(state.worldState.quests.quest_light_fog_lamp?.status).toBe('active')
+  expect(state.player.inventory.item_mirror_salt ?? 0).toBe(0)
+  expect(state.player.inventory.item_shadow_thread ?? 0).toBe(0)
+  expect(state.player.inventory.item_ashen_wick ?? 0).toBe(0)
+
+  state = advanceTimeSegment(pack, state).state
+  state = startConversation(pack, state, 'conversation_second_day_lamp_opening').state
+  state = chooseConversationReply(pack, state, 'reply_accept_lamp_opening').state
+
+  expect(state.worldState.quests.quest_light_fog_lamp?.status).toBe('completed')
+  expect(state.worldState.facts.lamp_lit).toBe(true)
+  expect(state.endingResult?.ending.id).toBe('ending_fog_lamp_departure')
 })
 
 test('content artifacts include browser-loadable static JSON for multiple packs', async () => {

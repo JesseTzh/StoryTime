@@ -1,26 +1,14 @@
 - id: reward_rite_prepared
   name: 封灯物齐备
-  description: 三段规则完成，封灯匣已经可以交付。
+  description: 三件封灯物已经在第一天夜里交给沈灯。
   effects:
     - type: add_fact
       key: rite_prepared
       value: true
     - type: start_quest
-      questId: quest_deliver_lamp_box
-    - type: change_variable
-      key: rule_integrity
-      delta: 10
-- id: reward_lamp_box_accepted
-  name: 守灯人验匣
-  description: 守灯人确认封灯匣没有被雾调换，最后点灯规则开放。
-  effects:
-    - type: add_fact
-      key: keeper_accepted_lamp_box
-      value: true
-    - type: start_quest
       questId: quest_light_fog_lamp
     - type: change_variable
-      key: lamp_readiness
+      key: rule_integrity
       delta: 10
 - id: reward_station_left
   name: 雾灯点亮

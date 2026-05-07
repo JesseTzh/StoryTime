@@ -47,7 +47,7 @@
           objectiveId: objective_morning_mirror
 - id: interaction_noon_shadow
   name: 灯架定影
-  description: 量出灯架的第十三根影线，把它缠到封灯匣的铜扣上。
+  description: 量出灯架的第十三根影线，把它绕在指节上，不能踩到影线末端。
   type: environment
   environmentType: search
   targetType: building
@@ -120,14 +120,8 @@
         - type: add_item
           itemId: item_ashen_wick
           count: 1
-        - type: add_item
-          itemId: item_sealed_lamp_box
-          count: 1
         - type: add_fact
           key: ritual_night_done
-          value: true
-        - type: add_fact
-          key: sealed_lamp_box_ready
           value: true
         - type: change_variable
           key: lamp_readiness
@@ -145,34 +139,3 @@
         - type: fail_quest_objective
           questId: quest_prepare_lamp_rite
           objectiveId: objective_night_wick
-- id: interaction_light_fog_lamp
-  name: 点亮雾灯
-  description: 在守灯人的注视下把封过的夜灰灯芯压入灯盏，直到雾里所有多余的脚步声同时停下。
-  type: environment
-  environmentType: search
-  targetType: building
-  targetId: building_lamp_room
-  cost:
-    actionPoints: 1
-    stamina: 10
-  conditions:
-    all:
-      - fact: time.day
-        equals: 2
-      - fact: quests.quest_deliver_lamp_box.status
-        equals: completed
-      - fact: facts.lamp_lit
-        exists: false
-  effects:
-    - type: add_fact
-      key: lamp_lit
-      value: true
-    - type: add_fact
-      key: station_left
-      value: true
-    - type: change_variable
-      key: lamp_readiness
-      delta: 20
-    - type: change_variable
-      key: fog_pressure
-      delta: -35

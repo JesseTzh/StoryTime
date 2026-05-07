@@ -9,11 +9,11 @@
     - fact: guide_briefed
       text: 你先听完守灯人的规则，没有把驿站当成普通歇脚处。
     - fact: ritual_night_done
-      text: 晨镜盐、正午影线和夜灰灯芯都进入封灯匣。
-    - fact: lamp_box_delivered
-      text: 次日你把封灯匣交给守灯人验看。
+      text: 你在第一夜前拿到了晨镜盐、正午影线和夜灰灯芯。
+    - fact: lamp_materials_delivered
+      text: 第一夜里，你把三件封灯物按时交给沈灯。
     - fact: lamp_lit
-      text: 雾灯重新亮起，驿站承认你仍是过路人。
+      text: 第二天沈灯开启雾灯，驿站承认你仍是过路人。
     - variable: lamp_readiness
       operator: greater_than_or_equal
       value: 80
@@ -24,10 +24,12 @@
   conditions:
     fact: facts.player_became_keeper
     equals: true
-  summary: 你没有在期限前点亮雾灯。雾把守灯人的名字从木牌上抹去，又把你的名字刻了上去。此后你站在无垠雾中，等待下一个敲门的人。
+  summary: 你没有在第一夜把三件封灯物交给沈灯。雾把守灯人的名字从木牌上抹去，又把你的名字刻了上去。此后你站在无垠雾中，等待下一个敲门的人。
   causalChainRules:
     - fact: guide_briefed
-      text: 你知道规则，却没能在第二天夜前完成它们。
+      text: 你知道规则，却没能在第一天夜里完成交付。
+    - fact: shen_plan_succeeded
+      text: 沈灯借你的失约摆脱了守灯人的位置。
     - variable: fog_pressure
       operator: greater_than_or_equal
       value: 20
