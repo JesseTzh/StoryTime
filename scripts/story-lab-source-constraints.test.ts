@@ -40,6 +40,17 @@ test('story lab templates and NPC views use conversations instead of legacy dial
   expect(storyFiles).not.toContain('dialogues.json')
 })
 
+test('story lab conversation branch list is grouped by NPC before titles', () => {
+  const page = source('pages/editor/conversation-branch-page.tsx')
+
+  expect(page).toContain('conversation-branch-npc-group-')
+  expect(page).toContain('conversation-branch-npc-title-')
+  expect(page).toContain('conversation-branch-select-')
+  expect(page).not.toContain('conversation-branch-meta-')
+  expect(page).not.toContain('节点 ·')
+  expect(page).not.toContain('回复</small>')
+})
+
 test('story lab uses interaction and quest terminology instead of legacy action branches', () => {
   const readSourceFiles = (dir: string): string[] => readdirSync(dir).flatMap((entry) => {
     const path = join(dir, entry)

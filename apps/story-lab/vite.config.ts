@@ -20,6 +20,7 @@ export default defineConfig({
       '@tss/schema': fileURLToPath(new URL('../../packages/schema/src/index.ts', import.meta.url)),
       '@tss/engine': fileURLToPath(new URL('../../packages/engine/src/index.ts', import.meta.url)),
       '@tss/validator': fileURLToPath(new URL('../../packages/validator/src/index.ts', import.meta.url)),
+      '@tss/ui': fileURLToPath(new URL('../../packages/ui/src/index.ts', import.meta.url)),
     },
   },
 })

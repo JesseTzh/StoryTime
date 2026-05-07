@@ -1,8 +1,7 @@
 import { MessageCircle, RotateCcw } from 'lucide-react'
 import { getActiveConversationNode, getConversationReplyAvailability } from '@tss/engine'
 import type { Condition, ConditionGroup, PlayerIdentity } from '@tss/schema'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge, Button } from '@tss/ui'
 import { useGameStore } from '@/store/game-store'
 
 export function ConversationPanel({ npcId }: { npcId?: string }) {

@@ -13,6 +13,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tss/engine": "workspace:*",
     "@tss/schema": "workspace:*",
+    "@tss/ui": "workspace:*",
     "@tss/validator": "workspace:*",
     "@vitejs/plugin-react": "^5.0.0",
     "class-variance-authority": "^0.7.1",

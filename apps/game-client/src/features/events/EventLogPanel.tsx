@@ -1,5 +1,5 @@
 import { History } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@tss/ui'
 import { cn } from '@/lib/cn'
 import { useGameStore } from '@/store/game-store'
 import { TIME_SEGMENT_LABEL } from '@tss/schema'

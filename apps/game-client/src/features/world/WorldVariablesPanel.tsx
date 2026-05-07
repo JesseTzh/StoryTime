@@ -1,5 +1,5 @@
 import { Activity } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@tss/ui'
 import { useGameStore } from '@/store/game-store'
 
 const highlight = new Set(['plague_level', 'bandit_power', 'town_fear', 'truth_progress'])

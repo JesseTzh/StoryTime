@@ -7,6 +7,7 @@ export type SectionId =
   | 'map'
   | 'schedule'
   | 'npc'
+  | 'conversations'
   | 'events'
   | 'simulation'
   | 'validation'

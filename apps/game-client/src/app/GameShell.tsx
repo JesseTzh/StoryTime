@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@tss/ui'
 import { useGameStore } from '@/store/game-store'
 
 export function GameShell({ children }: { children: ReactNode }) {

@@ -8,6 +8,7 @@ import { compile } from 'tailwindcss'
 
 const require = createRequire(import.meta.url)
 const sourceRoot = fileURLToPath(new URL('./src', import.meta.url))
+const uiRoot = fileURLToPath(new URL('../../packages/ui/src', import.meta.url))
 
 function tailwindCssPlugin(): Plugin {
   return {
@@ -15,7 +16,7 @@ function tailwindCssPlugin(): Plugin {
     enforce: 'pre',
     async transform(code, id) {
       if (!id.endsWith('/src/styles.css')) return null
-      const files = await collectSourceFiles(sourceRoot)
+      const files = [...await collectSourceFiles(sourceRoot), ...await collectSourceFiles(uiRoot)]
       for (const file of files) this.addWatchFile(file)
 
       const compiler = await compile(code, {
@@ -82,6 +83,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@tss/schema': fileURLToPath(new URL('../../packages/schema/src/index.ts', import.meta.url)),
       '@tss/engine': fileURLToPath(new URL('../../packages/engine/src/index.ts', import.meta.url)),
+      '@tss/ui': fileURLToPath(new URL('../../packages/ui/src/index.ts', import.meta.url)),
     },
   },
 })

@@ -10,5 +10,5 @@ test('adds a settings view with a persisted debug mode toggle in the system dial
   expect(source).toContain('data-test-id="top-status-system-settings"')
   expect(source).toContain('data-test-id="top-status-settings-debug-mode-toggle"')
   expect(source).toContain('checked={debugMode}')
-  expect(source).toContain('onChange={(event) => setDebugMode(event.target.checked)}')
+  expect(source).toContain('onCheckedChange={setDebugMode}')
 })

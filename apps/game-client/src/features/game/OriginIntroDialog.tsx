@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button'
-import { DialogBody, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from '@/components/ui/dialog'
+import { Button, Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from '@tss/ui'
 import { useGameStore } from '@/store/game-store'
 
 export function OriginIntroDialog() {
@@ -10,8 +9,8 @@ export function OriginIntroDialog() {
   if (!runtime || !identity?.intro || runtime.worldState.facts.origin_intro_seen === true) return null
 
   return (
-    <DialogOverlay data-test-id="origin-intro-dialog-overlay">
-      <DialogContent className="max-w-3xl" data-test-id="origin-intro-dialog" onClick={(event) => event.stopPropagation()}>
+    <Dialog open>
+      <DialogContent className="max-w-3xl" data-test-id="origin-intro-dialog" overlayTestId="origin-intro-dialog-overlay">
         <DialogHeader data-test-id="origin-intro-dialog-header">
           <DialogTitle data-test-id="origin-intro-dialog-title">{identity.intro.title}</DialogTitle>
         </DialogHeader>
@@ -30,6 +29,6 @@ export function OriginIntroDialog() {
           </div>
         </DialogBody>
       </DialogContent>
-    </DialogOverlay>
+    </Dialog>
   )
 }

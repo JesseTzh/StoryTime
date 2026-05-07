@@ -1,8 +1,7 @@
 import { Backpack, HeartPulse, UserRound } from 'lucide-react'
 import { relationKey } from '@tss/engine'
 import type { PlayerAttributeState } from '@tss/schema'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge, Card, CardContent, CardHeader, CardTitle } from '@tss/ui'
 import { useGameStore } from '@/store/game-store'
 
 const attributeLabels: Record<keyof PlayerAttributeState, string> = {

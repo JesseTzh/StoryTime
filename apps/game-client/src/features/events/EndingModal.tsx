@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button'
-import { DialogBody, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from '@/components/ui/dialog'
+import { Button, Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from '@tss/ui'
 import { useGameStore } from '@/store/game-store'
 
 export function EndingModal() {
@@ -7,8 +6,8 @@ export function EndingModal() {
   const resetGame = useGameStore((state) => state.resetGame)
   if (!result) return null
   return (
-    <DialogOverlay data-test-id="ending-dialog-overlay">
-      <DialogContent className="border-amber-300/30" data-test-id="ending-dialog">
+    <Dialog open>
+      <DialogContent className="border-amber-300/30" data-test-id="ending-dialog" overlayTestId="ending-dialog-overlay">
         <DialogHeader data-test-id="ending-dialog-header">
           <DialogTitle className="text-2xl" data-test-id="ending-dialog-title">结局：{result.ending.name}</DialogTitle>
         </DialogHeader>
@@ -23,6 +22,6 @@ export function EndingModal() {
           <Button data-test-id="ending-reset-button" onClick={resetGame}>重新开始</Button>
         </DialogBody>
       </DialogContent>
-    </DialogOverlay>
+    </Dialog>
   )
 }

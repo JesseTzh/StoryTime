@@ -6,6 +6,7 @@ import {
   GitBranch,
   LayoutDashboard,
   Map as MapIcon,
+  MessageSquareText,
   Network,
   ShieldCheck,
   UserRound,
@@ -24,6 +25,7 @@ import { buildFixPrompt, countSeverity, issueKey } from './editor/helpers'
 import { isSimulationCoverageWorkerCancelled, runSimulationCoverageInWorker } from './features/simulation/runSimulationCoverageInWorker'
 import {
   DashboardPage,
+  ConversationBranchPage,
   EventGraphPage,
   MapPage,
   NpcStudioPage,
@@ -41,6 +43,7 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof LayoutDashboa
   { id: 'map', label: '地图地点', icon: MapIcon },
   { id: 'schedule', label: '日程总览', icon: CalendarClock },
   { id: 'npc', label: 'NPC 管理', icon: UserRound },
+  { id: 'conversations', label: '对话分支', icon: MessageSquareText },
   { id: 'events', label: '事件分支', icon: GitBranch },
   { id: 'simulation', label: '剧情模拟', icon: Network },
   { id: 'validation', label: '剧情校验', icon: ShieldCheck },
@@ -57,6 +60,10 @@ function defaultNpcId(pack: ContentPack) {
 
 function defaultEventId(pack: ContentPack) {
   return pack.events[0]?.id ?? ''
+}
+
+function defaultConversationId(pack: ContentPack) {
+  return pack.conversations[0]?.id ?? ''
 }
 
 function deriveReviewState(report: ReturnType<typeof validateContentPack>) {
@@ -82,6 +89,7 @@ export function App() {
   const [selectedTileId, setSelectedTileId] = useState(defaultStoryProject ? defaultTileId(defaultStoryProject.pack) : '')
   const [selectedNpcId, setSelectedNpcId] = useState(defaultStoryProject ? defaultNpcId(defaultStoryProject.pack) : '')
   const [selectedEventId, setSelectedEventId] = useState(defaultStoryProject ? defaultEventId(defaultStoryProject.pack) : '')
+  const [selectedConversationId, setSelectedConversationId] = useState(defaultStoryProject ? defaultConversationId(defaultStoryProject.pack) : '')
   const [selectedFileId, setSelectedFileId] = useState('content-pack.json')
   const [activeNpcTab, setActiveNpcTab] = useState<NpcTabId>('basic')
   const [selectedIssueKey, setSelectedIssueKey] = useState('')
@@ -111,6 +119,7 @@ export function App() {
   const selectedLocation = selectedTile?.locationId ? pack.locations.find((location) => location.id === selectedTile.locationId) : undefined
   const selectedNpc = pack.npcs.find((npc) => npc.id === selectedNpcId) ?? pack.npcs[0]
   const selectedEvent = pack.events.find((event) => event.id === selectedEventId) ?? pack.events[0]
+  const selectedConversation = pack.conversations.find((conversation) => conversation.id === selectedConversationId) ?? pack.conversations[0]
   const allIssues = useMemo(() => [...report.errors, ...report.gaps], [report])
   const selectedIssue = selectedIssueKey ? allIssues.find((issue, index) => issueKey(issue, index) === selectedIssueKey) : allIssues[0]
   const severity = countSeverity(allIssues)
@@ -122,6 +131,7 @@ export function App() {
     setSelectedTileId(defaultTileId(pack))
     setSelectedNpcId(defaultNpcId(pack))
     setSelectedEventId(defaultEventId(pack))
+    setSelectedConversationId(defaultConversationId(pack))
     setSelectedFileId('content-pack.json')
     setSelectedIssueKey('')
     setGeneratedFixPrompt('')
@@ -300,6 +310,14 @@ export function App() {
             issues={allIssues}
             onSelectNpc={setSelectedNpcId}
             onSelectTab={setActiveNpcTab}
+          />
+        )}
+        {activeSection === 'conversations' && (
+          <ConversationBranchPage
+            issues={allIssues}
+            pack={pack}
+            selectedConversation={selectedConversation}
+            onSelectConversation={setSelectedConversationId}
           />
         )}
         {activeSection === 'events' && selectedEvent && (

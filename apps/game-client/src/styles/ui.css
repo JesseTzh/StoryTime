@@ -58,18 +58,10 @@ button.status-chip {
 }
 
 .top-status-popover-panel {
-  position: fixed;
-  z-index: 210;
-  width: min(28rem, calc(100vw - 2rem));
   max-height: min(34rem, calc(100vh - 8rem));
   overflow: auto;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.75rem;
-  background: rgba(20, 17, 13, 0.6);
-  backdrop-filter: blur(16px);
   padding: 1rem;
   color: #e6ded4;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
 }
 
 .top-status-popover-title,

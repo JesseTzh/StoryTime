@@ -11,6 +11,53 @@
   --game-accent: #e0b562;
   --game-accent-2: #9cc7ce;
   --game-danger: #f09a8c;
+
+  /* shadcn semantic tokens – dark game theme */
+  --background: #050505;
+  --foreground: #f4efe7;
+  --card: rgba(20, 18, 15, 0.74);
+  --card-foreground: #f4efe7;
+  --popover: rgba(20, 17, 13, 0.92);
+  --popover-foreground: #f4efe7;
+  --primary: #e0b562;
+  --primary-foreground: #0d0b09;
+  --secondary: #9cc7ce;
+  --secondary-foreground: #0d0b09;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #a9a096;
+  --accent: #e0b562;
+  --accent-foreground: #0d0b09;
+  --destructive: #f09a8c;
+  --destructive-foreground: #0d0b09;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #e0b562;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
 }
 
 * { box-sizing: border-box; }

@@ -1,6 +1,4 @@
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tss/ui'
 import type { ContentPackManifestEntry } from '@/store/content-loader'
 
 type StoryPackSelectPageProps = {

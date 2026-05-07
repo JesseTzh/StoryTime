@@ -1,12 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { ArrowLeft, Backpack, BatteryMedium, CalendarDays, Clock3, Coins, Download, HeartPulse, RotateCcw, Save, Settings, SlidersHorizontal, Upload, UserRound } from 'lucide-react'
 import { TIME_SEGMENT_LABEL } from '@tss/schema'
 import type { PlayerAttributeState } from '@tss/schema'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { DialogBody, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
+import { Badge, Button, Card, Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle, Popover, PopoverContent, PopoverTrigger, Switch } from '@tss/ui'
 import { EventLogPanel } from '@/features/events/EventLogPanel'
 import { useGameStore } from '@/store/game-store'
 
@@ -28,8 +24,6 @@ export function TopStatusBar() {
   const [systemDialogOpen, setSystemDialogOpen] = useState(false)
   const [systemView, setSystemView] = useState<'actions' | 'settings'>('actions')
   const [vitalsOpen, setVitalsOpen] = useState(false)
-  const [vitalsPosition, setVitalsPosition] = useState({ top: 0, left: 0 })
-  const vitalsRef = useRef<HTMLDivElement>(null)
   const vitalsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const runtime = useGameStore((state) => state.runtime)!
@@ -63,19 +57,8 @@ export function TopStatusBar() {
     importSave(await file.text())
   }
 
-  function updateVitalsPosition() {
-    const rect = vitalsRef.current?.getBoundingClientRect()
-    if (!rect) return
-    const panelWidth = Math.min(448, window.innerWidth - 32)
-    setVitalsPosition({
-      top: Math.min(rect.bottom + 8, window.innerHeight - 96),
-      left: Math.max(16, Math.min(rect.left, window.innerWidth - panelWidth - 16)),
-    })
-  }
-
   function openVitalsPopover() {
     if (vitalsCloseTimerRef.current) window.clearTimeout(vitalsCloseTimerRef.current)
-    updateVitalsPosition()
     setVitalsOpen(true)
   }
 
@@ -90,17 +73,6 @@ export function TopStatusBar() {
   }
 
   useEffect(() => {
-    if (!vitalsOpen) return
-    updateVitalsPosition()
-    window.addEventListener('resize', updateVitalsPosition)
-    window.addEventListener('scroll', updateVitalsPosition, true)
-    return () => {
-      window.removeEventListener('resize', updateVitalsPosition)
-      window.removeEventListener('scroll', updateVitalsPosition, true)
-    }
-  }, [vitalsOpen])
-
-  useEffect(() => {
     return () => {
       if (vitalsCloseTimerRef.current) window.clearTimeout(vitalsCloseTimerRef.current)
     }
@@ -112,7 +84,6 @@ export function TopStatusBar() {
       data-test-id="top-status-player-vitals-detail"
       onMouseEnter={openVitalsPopover}
       onMouseLeave={closeVitalsPopover}
-      style={{ top: vitalsPosition.top, left: vitalsPosition.left }}
     >
       <div className="top-status-popover-title" data-test-id="top-status-player-vitals-title">
         <UserRound className="size-4" data-test-id="top-status-player-vitals-title-icon" />{identity?.name ?? '旅人'}
@@ -147,30 +118,36 @@ export function TopStatusBar() {
           <div className="text-lg font-semibold text-amber-100" data-test-id="top-status-title">{pack.world.name}</div>
           <div className="mt-1 text-xs text-stone-400" data-test-id="top-status-identity">身份：{identity?.name}</div>
         </div>
-        <div
-          ref={vitalsRef}
-          className="top-status-hover"
-          data-test-id="top-status-player-vitals-popover"
-          onMouseEnter={openVitalsPopover}
-          onMouseLeave={closeVitalsPopover}
-          onFocus={openVitalsPopover}
-          onBlur={closeVitalsPopover}
-        >
-          <div className="top-status-vitals-list" data-test-id="top-status-player-vitals">
-            <span className="top-status-vital-inline" data-test-id="top-status-player-vital-health-chip">
-              <HeartPulse className="size-4" data-test-id="top-status-player-vitals-health-icon" />
-              <strong data-test-id="top-status-player-vitals-health-value">{runtime.player.state.health}</strong>
-            </span>
-            <span className="top-status-vital-inline" data-test-id="top-status-player-vital-stamina-chip">
-              <BatteryMedium className="size-4" data-test-id="top-status-player-vitals-stamina-icon" />
-              <strong data-test-id="top-status-player-vitals-stamina-value">{runtime.player.state.stamina}</strong>
-            </span>
-            <span className="top-status-vital-inline" data-test-id="top-status-player-vital-money-chip">
-              <Coins className="size-4" data-test-id="top-status-player-vitals-money-icon" />
-              <strong data-test-id="top-status-player-vitals-money-value">{runtime.player.state.money}</strong>
-            </span>
-          </div>
-        </div>
+        <Popover open={vitalsOpen} onOpenChange={setVitalsOpen}>
+          <PopoverTrigger asChild>
+            <div
+              className="top-status-hover"
+              data-test-id="top-status-player-vitals-popover"
+              onMouseEnter={openVitalsPopover}
+              onMouseLeave={closeVitalsPopover}
+              onFocus={openVitalsPopover}
+              onBlur={closeVitalsPopover}
+            >
+              <div className="top-status-vitals-list" data-test-id="top-status-player-vitals">
+                <span className="top-status-vital-inline" data-test-id="top-status-player-vital-health-chip">
+                  <HeartPulse className="size-4" data-test-id="top-status-player-vitals-health-icon" />
+                  <strong data-test-id="top-status-player-vitals-health-value">{runtime.player.state.health}</strong>
+                </span>
+                <span className="top-status-vital-inline" data-test-id="top-status-player-vital-stamina-chip">
+                  <BatteryMedium className="size-4" data-test-id="top-status-player-vitals-stamina-icon" />
+                  <strong data-test-id="top-status-player-vitals-stamina-value">{runtime.player.state.stamina}</strong>
+                </span>
+                <span className="top-status-vital-inline" data-test-id="top-status-player-vital-money-chip">
+                  <Coins className="size-4" data-test-id="top-status-player-vitals-money-icon" />
+                  <strong data-test-id="top-status-player-vitals-money-value">{runtime.player.state.money}</strong>
+                </span>
+              </div>
+            </div>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-[min(28rem,calc(100vw-2rem))] p-0" data-test-id="top-status-player-vitals-popover-content" onOpenAutoFocus={(event) => event.preventDefault()}>
+            {vitalsDetail}
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="flex flex-wrap items-center gap-2 text-sm" data-test-id="top-status-controls">
         <button className="status-chip" data-test-id="top-status-day" type="button" onClick={() => setStoryDialogOpen(true)}>
@@ -185,10 +162,8 @@ export function TopStatusBar() {
           <input data-test-id="top-status-system-import-input" ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(event) => handleImport(event.target.files?.[0])} />
         </div>
       </div>
-      {vitalsOpen && typeof document !== 'undefined' && createPortal(vitalsDetail, document.body)}
-      {storyDialogOpen && (
-        <DialogOverlay data-test-id="top-status-day-dialog" onClick={() => setStoryDialogOpen(false)}>
-          <DialogContent className="max-w-3xl" data-test-id="top-status-day-dialog-content" onClick={(event) => event.stopPropagation()}>
+      <Dialog open={storyDialogOpen} onOpenChange={setStoryDialogOpen}>
+          <DialogContent className="max-w-3xl" data-test-id="top-status-day-dialog-content" overlayTestId="top-status-day-dialog">
             <DialogHeader data-test-id="top-status-day-dialog-header">
               <DialogTitle data-test-id="top-status-day-dialog-title">故事纪要</DialogTitle>
             </DialogHeader>
@@ -196,11 +171,9 @@ export function TopStatusBar() {
               <EventLogPanel logs={runtime.eventLogs} className="h-[72vh] rounded-none border-0 bg-transparent" emptyText="暂无主角相关记录。" />
             </DialogBody>
           </DialogContent>
-        </DialogOverlay>
-      )}
-      {systemDialogOpen && (
-        <DialogOverlay data-test-id="top-status-system-dialog" onClick={closeSystemDialog}>
-          <DialogContent className="max-w-sm" data-test-id="top-status-system-dialog-content" onClick={(event) => event.stopPropagation()}>
+      </Dialog>
+      <Dialog open={systemDialogOpen} onOpenChange={(open) => open ? setSystemDialogOpen(true) : closeSystemDialog()}>
+          <DialogContent className="max-w-sm" data-test-id="top-status-system-dialog-content" overlayTestId="top-status-system-dialog">
             <DialogHeader data-test-id="top-status-system-dialog-header">
               <DialogTitle data-test-id="top-status-system-dialog-title">{systemView === 'settings' ? '设置' : '系统'}</DialogTitle>
             </DialogHeader>
@@ -218,19 +191,17 @@ export function TopStatusBar() {
                   <Button data-test-id="top-status-settings-back" variant="ghost" onClick={() => setSystemView('actions')}><ArrowLeft className="mr-1 size-4" data-test-id="top-status-settings-back-icon" />返回</Button>
                   <label className="top-status-settings-row" data-test-id="top-status-settings-debug-mode-row">
                     <span data-test-id="top-status-settings-debug-mode-label">调试模式</span>
-                    <input
+                    <Switch
                       data-test-id="top-status-settings-debug-mode-toggle"
-                      type="checkbox"
                       checked={debugMode}
-                      onChange={(event) => setDebugMode(event.target.checked)}
+                      onCheckedChange={setDebugMode}
                     />
                   </label>
                 </div>
               )}
             </DialogBody>
           </DialogContent>
-        </DialogOverlay>
-      )}
+      </Dialog>
     </Card>
   )
 }

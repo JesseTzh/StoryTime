@@ -19,7 +19,8 @@
     "paths": {
       "@tss/schema": ["packages/schema/src/index.ts"],
       "@tss/engine": ["packages/engine/src/index.ts"],
-      "@tss/validator": ["packages/validator/src/index.ts"]
+      "@tss/validator": ["packages/validator/src/index.ts"],
+      "@tss/ui": ["packages/ui/src/index.ts"]
     }
   }
 }
