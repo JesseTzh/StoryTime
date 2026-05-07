@@ -11,6 +11,8 @@ type GameStore = {
   contentIndex: ContentIndex
   runtime?: GameRuntimeState
   lastError?: string
+  timeAdvancePromptOpen: boolean
+  timeAdvanceTransitionRequested: boolean
   debugMode: boolean
   selectedConversationNpcId?: string
   setDebugMode: (enabled: boolean) => void
@@ -31,6 +33,10 @@ type GameStore = {
   chooseConversationReply: (replyId: string) => void
   endConversation: () => void
   advanceTime: () => void
+  confirmTimeAdvance: () => void
+  requestTimeAdvanceTransition: () => void
+  clearTimeAdvanceTransitionRequest: () => void
+  dismissTimeAdvancePrompt: () => void
   rest: () => void
   dismissOriginIntro: () => void
   clearError: () => void
@@ -48,6 +54,8 @@ export function initializeGameStore(contentPack: ContentPack) {
     runtime: undefined,
     selectedConversationNpcId: undefined,
     lastError: undefined,
+    timeAdvancePromptOpen: false,
+    timeAdvanceTransitionRequested: false,
     debugMode: readDebugMode(),
   })
 }
@@ -69,15 +77,25 @@ function validateSaveRuntime(contentPack: ContentPack, runtime: GameRuntimeState
   return undefined
 }
 
-function withPostTurn(pack: ContentPack, state: GameRuntimeState): GameRuntimeState {
+function withPostTurn(pack: ContentPack, state: GameRuntimeState, options: { autoAdvanceTime?: boolean } = {}): GameRuntimeState {
   let next = processEvents(pack, state).state
-  next = maybeAutoAdvanceTime(pack, next).state
+  if (options.autoAdvanceTime) next = maybeAutoAdvanceTime(pack, next).state
   return next
+}
+
+function hasActionPointsForInteraction(state: GameRuntimeState, interaction: Interaction): boolean {
+  return state.time.actionPoints >= (interaction.cost?.actionPoints ?? 1)
+}
+
+function isOnlyBlockedByActionPoints(state: GameRuntimeState, interaction: Interaction, reasons: string[]): boolean {
+  return !hasActionPointsForInteraction(state, interaction) && reasons.length === 1 && reasons[0]?.startsWith('行动点不足')
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
   contentPack: undefined as unknown as ContentPack,
   contentIndex: createEmptyContentIndex(),
+  timeAdvancePromptOpen: false,
+  timeAdvanceTransitionRequested: false,
   debugMode: readDebugMode(),
   setDebugMode(enabled) {
     if (typeof localStorage !== 'undefined') localStorage.setItem(debugModeStorageKey, String(enabled))
@@ -85,13 +103,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
   selectIdentity(identityId) {
     const { contentPack } = get()
-    const runtime = withPostTurn(contentPack, createInitialRuntimeState(contentPack, identityId))
+    const runtime = withPostTurn(contentPack, createInitialRuntimeState(contentPack, identityId), { autoAdvanceTime: true })
     persist(runtime)
-    set({ runtime, lastError: undefined })
+    set({ runtime, lastError: undefined, timeAdvancePromptOpen: false, timeAdvanceTransitionRequested: false })
   },
   resetGame() {
     localStorage.removeItem(requireSaveKey())
-    set({ runtime: undefined, selectedConversationNpcId: undefined, lastError: undefined })
+    set({ runtime: undefined, selectedConversationNpcId: undefined, lastError: undefined, timeAdvancePromptOpen: false, timeAdvanceTransitionRequested: false })
   },
   hasSavedGame() {
     const { contentPack } = get()
@@ -122,7 +140,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({ lastError: error })
         return false
       }
-      set({ runtime: parsed.state, selectedConversationNpcId: undefined, lastError: undefined })
+      set({ runtime: parsed.state, selectedConversationNpcId: undefined, lastError: undefined, timeAdvancePromptOpen: false, timeAdvanceTransitionRequested: false })
       return true
     } catch {
       set({ lastError: '存档读取失败' })
@@ -147,7 +165,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         return false
       }
       persist(runtime)
-      set({ runtime, selectedConversationNpcId: undefined, lastError: undefined })
+      set({ runtime, selectedConversationNpcId: undefined, lastError: undefined, timeAdvancePromptOpen: false, timeAdvanceTransitionRequested: false })
       return true
     } catch {
       set({ lastError: '导入失败：不是合法存档 JSON' })
@@ -176,6 +194,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!runtime?.selectedTileId) return
     const tile = contentIndex.tileById.get(runtime.selectedTileId)
     if (!tile?.locationId) return set({ lastError: '该地块没有可进入地点' })
+    if (runtime.time.actionPoints < 1) return set({ timeAdvancePromptOpen: true, lastError: undefined })
     const result = movePlayerToLocation(contentPack, runtime, tile.locationId)
     if (!result.ok) return set({ lastError: result.reasons.join('；') })
     const after = withPostTurn(contentPack, result.state)
@@ -185,6 +204,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   executeInteraction(interactionId) {
     const { contentPack, runtime } = get()
     if (!runtime) return
+    const interaction = contentPack.interactions.find((item) => item.id === interactionId)
+    if (interaction && !hasActionPointsForInteraction(runtime, interaction)) return set({ timeAdvancePromptOpen: true, lastError: undefined })
     const result = runInteraction(contentPack, runtime, interactionId)
     if (!result.ok) return set({ lastError: result.reasons.join('；') })
     const after = withPostTurn(contentPack, result.state)
@@ -224,7 +245,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!runtime) return
     const result = maybeAutoAdvanceTime(contentPack, { ...runtime, time: { ...runtime.time, actionPoints: 0 } })
     persist(result.state)
-    set({ runtime: result.state, lastError: undefined })
+    set({ runtime: result.state, lastError: undefined, timeAdvancePromptOpen: false, timeAdvanceTransitionRequested: false })
+  },
+  confirmTimeAdvance() {
+    get().advanceTime()
+  },
+  requestTimeAdvanceTransition() {
+    set({ timeAdvanceTransitionRequested: true, lastError: undefined })
+  },
+  clearTimeAdvanceTransitionRequest() {
+    set({ timeAdvanceTransitionRequested: false })
+  },
+  dismissTimeAdvancePrompt() {
+    set({ timeAdvancePromptOpen: false, lastError: undefined })
   },
   rest() {
     const { contentPack, runtime } = get()
@@ -244,7 +277,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     ]
     const after = maybeAutoAdvanceTime(contentPack, next).state
     persist(after)
-    set({ runtime: after, lastError: undefined })
+    set({ runtime: after, lastError: undefined, timeAdvancePromptOpen: false, timeAdvanceTransitionRequested: false })
   },
   dismissOriginIntro() {
     const runtime = get().runtime
@@ -278,7 +311,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       .map((id) => contentIndex.interactionById.get(id))
       .filter((interaction): interaction is Interaction => Boolean(interaction))
       .map((interaction) => ({ interaction, ...getInteractionAvailability(contentPack, runtime, interaction) }))
-      .filter((entry) => debugMode || entry.available)
+      .filter((entry) => debugMode || entry.available || isOnlyBlockedByActionPoints(runtime, entry.interaction, entry.reasons))
   },
   getQuestEntries() {
     const { contentPack, runtime } = get()

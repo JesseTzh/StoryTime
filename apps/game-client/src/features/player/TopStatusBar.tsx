@@ -28,7 +28,7 @@ export function TopStatusBar() {
   const fileRef = useRef<HTMLInputElement>(null)
   const runtime = useGameStore((state) => state.runtime)!
   const pack = useGameStore((state) => state.contentPack)
-  const advanceTime = useGameStore((state) => state.advanceTime)
+  const requestTimeAdvanceTransition = useGameStore((state) => state.requestTimeAdvanceTransition)
   const resetGame = useGameStore((state) => state.resetGame)
   const exportSave = useGameStore((state) => state.exportSave)
   const importSave = useGameStore((state) => state.importSave)
@@ -156,7 +156,7 @@ export function TopStatusBar() {
         <span className="status-chip" data-test-id="top-status-segment"><Clock3 className="size-4" data-test-id="top-status-segment-icon" />{TIME_SEGMENT_LABEL[runtime.time.segment]}</span>
         <span className="status-chip is-accent" data-test-id="top-status-action-points">行动点 {runtime.time.actionPoints}</span>
         {activeQuests > 0 && <span className="status-chip is-accent" data-test-id="top-status-active-quests">任务 {activeQuests}</span>}
-        <Button data-test-id="top-status-advance-time" variant="outline" onClick={advanceTime}><Clock3 className="mr-1 size-4" data-test-id="top-status-advance-time-icon" />结束时段</Button>
+        <Button data-test-id="top-status-advance-time" variant="outline" onClick={requestTimeAdvanceTransition}><Clock3 className="mr-1 size-4" data-test-id="top-status-advance-time-icon" />结束时段</Button>
         <div className="top-status-system-trigger" data-test-id="top-status-system-menu">
           <Button data-test-id="top-status-system-button" variant="ghost" onClick={() => setSystemDialogOpen(true)}><Settings className="mr-1 size-4" data-test-id="top-status-system-icon" />系统</Button>
           <input data-test-id="top-status-system-import-input" ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(event) => handleImport(event.target.files?.[0])} />

@@ -27,6 +27,119 @@
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
 }
 
+.time-advance-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.time-advance-prompt-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.time-advance-prompt-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(28rem, 100%);
+  gap: 1rem;
+  border: 1px solid rgba(224, 181, 98, 0.28);
+  border-radius: 0.75rem;
+  background: rgba(20, 17, 13, 0.96);
+  padding: 1.25rem;
+  color: #f1e6d4;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52);
+}
+
+.time-advance-prompt-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: #f2d28c;
+}
+
+.time-advance-prompt-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.time-advance-prompt-message {
+  margin: 0;
+  color: #d8d0c5;
+  line-height: 1.7;
+}
+
+.time-advance-prompt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.time-advance-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: rgba(3, 3, 3, 0.88);
+  animation: time-advance-transition-fade 0.5s ease both;
+}
+
+.time-advance-transition-pulse {
+  position: absolute;
+  width: min(28rem, 70vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(224, 181, 98, 0.35);
+  border-radius: 999px;
+  animation: time-advance-transition-pulse 0.5s ease-out both;
+}
+
+.time-advance-transition-copy {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #f2d28c;
+  font-weight: 700;
+}
+
+@keyframes time-advance-transition-fade {
+  0% {
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes time-advance-transition-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
 .game-page,
 .identity-page,
 .story-pack-select-page {

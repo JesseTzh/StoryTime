@@ -24,6 +24,7 @@ export function TileInfoPanel() {
   const getAvailableInteractionsForSelectedTile = useGameStore((state) => state.getAvailableInteractionsForSelectedTile)
   const selectedConversationNpcId = useGameStore((state) => state.selectedConversationNpcId)
   const selectConversationNpc = useGameStore((state) => state.selectConversationNpc)
+  const debugMode = useGameStore((state) => state.debugMode)
   const tile = useMemo(() => {
     if (!runtime.selectedTileId) return undefined
     const selected = pack.maps[0].tiles.find((item) => item.id === runtime.selectedTileId)
@@ -40,7 +41,7 @@ export function TileInfoPanel() {
   const description = location?.descriptions[runtime.time.segment] ?? location?.descriptions.default
   const isCurrentLocation = runtime.player.locationId === location?.id
   const selectedNpcId = selectedConversationNpcId && npcs.some((npc) => npc.id === selectedConversationNpcId) ? selectedConversationNpcId : undefined
-  const canTravel = Boolean(location && runtimeLocation?.accessible && tile.visible && tile.discovered && !tile.blocked && !isCurrentLocation && runtime.time.actionPoints > 0)
+  const canAttemptTravel = Boolean(location && runtimeLocation?.accessible && tile.visible && tile.discovered && !tile.blocked && !isCurrentLocation)
   const sortedInteractions = [...interactionEntries].sort((a, b) => Number(b.available) - Number(a.available))
 
   return (
@@ -66,7 +67,7 @@ export function TileInfoPanel() {
         {location && (
           <>
             <p className="rounded-lg bg-white/[0.04] p-3 text-sm leading-7 text-stone-300" data-test-id="tile-info-description">{description}</p>
-            <Button className="w-full" data-test-id="tile-travel-button" onClick={moveToSelectedLocation} disabled={!canTravel}>
+            <Button className="w-full" data-test-id="tile-travel-button" onClick={moveToSelectedLocation} disabled={!canAttemptTravel}>
               <Route className="mr-1 size-4" data-test-id="tile-travel-icon" />{isCurrentLocation ? '你正在此地' : '前往此地（1 行动点）'}
             </Button>
             <section data-test-id="tile-conversation-section">
@@ -109,6 +110,9 @@ export function TileInfoPanel() {
                 {sortedInteractions.length === 0 && <p className="text-sm text-stone-500" data-test-id="tile-interaction-empty">此地暂时没有可用交互。</p>}
                 {sortedInteractions.map(({ interaction, available, reasons }) => {
                   const blockedByLocation = runtime.player.locationId !== location.id
+                  const actionPointCost = interaction.cost?.actionPoints ?? 1
+                  const hasEnoughActionPoints = runtime.time.actionPoints >= actionPointCost
+                  const showUnavailableReason = debugMode || blockedByLocation || hasEnoughActionPoints
                   const unavailableText = blockedByLocation ? '需要先前往此地' : reasons.join('；')
                   return (
                     <div key={interaction.id} className="rounded-lg border border-white/10 bg-black/15 p-3" data-test-id={`tile-interaction-row-${interaction.id}`}>
@@ -121,9 +125,9 @@ export function TileInfoPanel() {
                             {interaction.type === 'environment' && <Badge data-test-id={`tile-interaction-environment-${interaction.id}`}>{interaction.environmentType === 'gather' ? '采集' : '搜索'}</Badge>}
                             {formatCost(interaction.cost).map((item) => <Badge key={item} className="text-stone-300" data-test-id={`tile-interaction-cost-${interaction.id}-${item}`}>{item}</Badge>)}
                           </div>
-                          {!available || blockedByLocation ? <div className="mt-2 flex items-start gap-1 text-xs text-red-200" data-test-id={`tile-interaction-unavailable-${interaction.id}`}><Lock className="mt-0.5 size-3 shrink-0" data-test-id={`tile-interaction-unavailable-icon-${interaction.id}`} />{unavailableText}</div> : null}
+                          {(!available || blockedByLocation) && showUnavailableReason ? <div className="mt-2 flex items-start gap-1 text-xs text-red-200" data-test-id={`tile-interaction-unavailable-${interaction.id}`}><Lock className="mt-0.5 size-3 shrink-0" data-test-id={`tile-interaction-unavailable-icon-${interaction.id}`} />{unavailableText}</div> : null}
                         </div>
-                        <Button className="shrink-0" data-test-id={`tile-interaction-execute-${interaction.id}`} disabled={!available || blockedByLocation} onClick={() => executeInteraction(interaction.id)}><Zap className="mr-1 size-4" data-test-id={`tile-interaction-execute-icon-${interaction.id}`} />执行</Button>
+                        <Button className="shrink-0" data-test-id={`tile-interaction-execute-${interaction.id}`} disabled={blockedByLocation || (!available && hasEnoughActionPoints)} onClick={() => executeInteraction(interaction.id)}><Zap className="mr-1 size-4" data-test-id={`tile-interaction-execute-icon-${interaction.id}`} />执行</Button>
                       </div>
                     </div>
                   )

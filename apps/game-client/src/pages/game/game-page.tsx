@@ -1,5 +1,6 @@
 import { EndingModal } from '@/features/events/EndingModal'
 import { OriginIntroDialog } from '@/features/game/OriginIntroDialog'
+import { TimeAdvancePrompt } from '@/features/game/TimeAdvancePrompt'
 import { WorldMapGrid } from '@/features/map/components/WorldMapGrid'
 import { TopStatusBar } from '@/features/player/TopStatusBar'
 import { QuestPanel } from '@/features/quests/QuestPanel'
@@ -18,6 +19,7 @@ export function GamePage() {
           </aside>
         </div>
       </div>
+      <TimeAdvancePrompt />
       <OriginIntroDialog />
       <EndingModal />
     </main>
