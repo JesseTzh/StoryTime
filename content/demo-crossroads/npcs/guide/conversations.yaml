@@ -1,6 +1,6 @@
 - id: conversation_keeper_rules
   npcId: npc_guide
-  title: 询问雾灯规则
+  title: 询问如何离开此处
   entryNodeId: node_entry
   priority: 20
   conditions:
@@ -12,17 +12,24 @@
       text: 进了驿站就别急着走。雾已经记住你的脚步，只有雾灯亮起，它才会承认你不是这里的人。
       replies:
         - id: reply_ask_rules
-          text: 告诉我规则。
-          nextNodeId: node_rules
+          text: 我该怎么离开这里？
+          nextNodeId: node_leave_hint
         - id: reply_refuse_rules
           text: 我不信这些。
           endConversation: true
+    - id: node_leave_hint
+      speaker: npc_guide
+      text: 路不在雾里，在灯里。你若真想离开，就照我说的做；差一步，雾都会替你记着。
+      replies:
+        - id: reply_ask_how
+          text: 好，我可以。具体该怎么做？
+          nextNodeId: node_rules
     - id: node_rules
       speaker: npc_guide
       text: 第一，晨时擦镜，不看镜里多出来的脸。第二，正午定影，不踩第十三根影线。第三，夜里封芯，听见自己的名字也不要应。三样都做完，封灯匣会自己合上。
       replies:
         - id: reply_accept_rules
-          text: 我按规则做。
+          text: 我照你说的做。
           endConversation: true
           effects:
             - type: add_fact
@@ -49,7 +56,7 @@
   nodes:
     - id: node_prepare_lamp_reminder
       speaker: npc_guide
-      text: 规则已经给你了。先把三件封灯物收齐，等封灯匣自己合上，明天再拿来找我。路不会提前认人，雾也不会。
+      text: 离开的办法已经告诉你了。先把三件封灯物收齐，等封灯匣自己合上，明天再拿来找我。路不会提前认人，雾也不会。
       replies:
         - id: reply_prepare_lamp_ack
           text: 我会带着封灯匣回来。

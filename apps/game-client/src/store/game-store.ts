@@ -264,7 +264,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return tile ? getTileWithRuntime(runtime, tile) : undefined
   },
   getAvailableInteractionsForSelectedTile() {
-    const { contentPack, contentIndex, runtime } = get()
+    const { contentPack, contentIndex, runtime, debugMode } = get()
     const tile = get().getSelectedTile()
     if (!runtime || !tile?.locationId) return []
     const location = contentIndex.locationById.get(tile.locationId)
@@ -278,6 +278,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       .map((id) => contentIndex.interactionById.get(id))
       .filter((interaction): interaction is Interaction => Boolean(interaction))
       .map((interaction) => ({ interaction, ...getInteractionAvailability(contentPack, runtime, interaction) }))
+      .filter((entry) => debugMode || entry.available)
   },
   getQuestEntries() {
     const { contentPack, runtime } = get()
