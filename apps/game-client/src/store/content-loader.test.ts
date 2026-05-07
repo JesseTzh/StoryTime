@@ -1,6 +1,6 @@
 import type { ContentPack } from '@tss/schema'
 import { afterEach, expect, test, vi } from 'vitest'
-import { loadContentPack, loadContentPackManifest, type ContentPackManifest } from './content-loader'
+import { loadContentPack, loadContentPackManifest, resolveContentUrl, type ContentPackManifest } from './content-loader'
 
 const pack = {
   packId: 'pack_fixture',
@@ -89,4 +89,10 @@ test('reports a useful error when manifest loading fails', async () => {
   } as Response)))
 
   await expect(loadContentPackManifest()).rejects.toThrow('Failed to load /content-packs/manifest.json: 404')
+})
+
+test('resolves content URLs relative to a Pages base path', () => {
+  expect(resolveContentUrl('/content-packs/pack_fixture.json', '/fabulous-racoon/')).toBe('/fabulous-racoon/content-packs/pack_fixture.json')
+  expect(resolveContentUrl('content-packs/pack_fixture.json', '/fabulous-racoon')).toBe('/fabulous-racoon/content-packs/pack_fixture.json')
+  expect(resolveContentUrl('https://example.com/pack_fixture.json', '/fabulous-racoon/')).toBe('https://example.com/pack_fixture.json')
 })

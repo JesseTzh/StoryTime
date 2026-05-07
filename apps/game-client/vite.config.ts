@@ -66,7 +66,16 @@ function resolveStylesheet(id: string, base: string): string {
   return resolve(base, id)
 }
 
+function resolvePagesBasePath() {
+  const basePath = process.env.TSS_PAGES_BASE_PATH?.trim()
+  if (!basePath || basePath === '/') return '/'
+
+  const trimmedBasePath = basePath.replace(/^\/+|\/+$/g, '')
+  return `/${trimmedBasePath}/`
+}
+
 export default defineConfig({
+  base: resolvePagesBasePath(),
   plugins: [react(), tailwindCssPlugin()],
   resolve: {
     alias: {
