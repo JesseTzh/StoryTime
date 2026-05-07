@@ -1,11 +1,14 @@
 import {
   AlertTriangle,
+  ChevronDown,
+  ChevronRight,
   CheckCircle2,
   GitBranch,
   MessageSquareText,
   Route,
   UserRound,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import type { ContentPack, Conversation, ValidationIssue } from '@tss/schema'
 import {
   Badge,
@@ -44,7 +47,31 @@ export function ConversationBranchPage({
       conversations: pack.conversations.filter((conversation) => conversation.npcId === npc.id),
     }))
     .filter((group) => group.conversations.length > 0)
-  const unassignedConversations = pack.conversations.filter((conversation) => !pack.npcs.some((npc) => npc.id === conversation.npcId))
+  const knownNpcIds = new Set(pack.npcs.map((npc) => npc.id))
+  const unassignedConversations = pack.conversations.filter((conversation) => !knownNpcIds.has(conversation.npcId))
+  const selectedConversationGroupId = selectedConversation ? (knownNpcIds.has(selectedConversation.npcId) ? selectedConversation.npcId : 'unassigned') : undefined
+  const defaultExpandedNpcIds = selectedConversationGroupId ? [selectedConversationGroupId] : []
+  const [expandedNpcIds, setExpandedNpcIds] = useState<Set<string>>(() => new Set(defaultExpandedNpcIds))
+  useEffect(() => {
+    if (!selectedConversationGroupId) return
+    setExpandedNpcIds((current) => {
+      if (current.has(selectedConversationGroupId)) return current
+      const next = new Set(current)
+      next.add(selectedConversationGroupId)
+      return next
+    })
+  }, [selectedConversationGroupId])
+  const toggleNpcGroup = (npcId: string) => {
+    setExpandedNpcIds((current) => {
+      const next = new Set(current)
+      if (next.has(npcId)) {
+        next.delete(npcId)
+      } else {
+        next.add(npcId)
+      }
+      return next
+    })
+  }
 
   return (
     <>
@@ -63,42 +90,31 @@ export function ConversationBranchPage({
           <CardContent>
             <div className="conversation-npc-menu" data-test-id="conversation-branches-list">
               {conversationsByNpc.map((group) => (
-                <div key={group.npc.id} className="conversation-npc-group" data-test-id={`conversation-branch-npc-group-${group.npc.id}`}>
-                  <div className="conversation-npc-title" data-test-id={`conversation-branch-npc-title-${group.npc.id}`}>
-                    <UserRound size={16} />
-                    <strong>{group.npc.name}</strong>
-                  </div>
-                  <div className="conversation-title-list" data-test-id={`conversation-branch-npc-conversations-${group.npc.id}`}>
-                    {group.conversations.map((conversation) => (
-                      <ConversationTitleButton
-                        key={conversation.id}
-                        analysisIssueCount={analysisByConversation.get(conversation.id)?.issues.length ?? 0}
-                        conversation={conversation}
-                        selected={selectedConversation?.id === conversation.id}
-                        onSelectConversation={onSelectConversation}
-                      />
-                    ))}
-                  </div>
-                </div>
+                <ConversationNpcGroup
+                  key={group.npc.id}
+                  analysisByConversation={analysisByConversation}
+                  conversationCount={group.conversations.length}
+                  conversations={group.conversations}
+                  expanded={expandedNpcIds.has(group.npc.id)}
+                  id={group.npc.id}
+                  label={group.npc.name}
+                  selectedConversationId={selectedConversation?.id}
+                  onSelectConversation={onSelectConversation}
+                  onToggle={() => toggleNpcGroup(group.npc.id)}
+                />
               ))}
               {unassignedConversations.length > 0 && (
-                <div className="conversation-npc-group" data-test-id="conversation-branch-npc-group-unassigned">
-                  <div className="conversation-npc-title" data-test-id="conversation-branch-npc-title-unassigned">
-                    <UserRound size={16} />
-                    <strong>未匹配 NPC</strong>
-                  </div>
-                  <div className="conversation-title-list" data-test-id="conversation-branch-npc-conversations-unassigned">
-                    {unassignedConversations.map((conversation) => (
-                      <ConversationTitleButton
-                        key={conversation.id}
-                        analysisIssueCount={analysisByConversation.get(conversation.id)?.issues.length ?? 0}
-                        conversation={conversation}
-                        selected={selectedConversation?.id === conversation.id}
-                        onSelectConversation={onSelectConversation}
-                      />
-                    ))}
-                  </div>
-                </div>
+                <ConversationNpcGroup
+                  analysisByConversation={analysisByConversation}
+                  conversationCount={unassignedConversations.length}
+                  conversations={unassignedConversations}
+                  expanded={expandedNpcIds.has('unassigned')}
+                  id="unassigned"
+                  label="未匹配 NPC"
+                  selectedConversationId={selectedConversation?.id}
+                  onSelectConversation={onSelectConversation}
+                  onToggle={() => toggleNpcGroup('unassigned')}
+                />
               )}
             </div>
           </CardContent>
@@ -118,6 +134,65 @@ export function ConversationBranchPage({
         )}
       </section>
     </>
+  )
+}
+
+function ConversationNpcGroup({
+  analysisByConversation,
+  conversationCount,
+  conversations,
+  expanded,
+  id,
+  label,
+  selectedConversationId,
+  onSelectConversation,
+  onToggle,
+}: {
+  analysisByConversation: Map<string, ConversationBranchAnalysis>
+  conversationCount: number
+  conversations: Conversation[]
+  expanded: boolean
+  id: string
+  label: string
+  selectedConversationId?: string
+  onSelectConversation: (id: string) => void
+  onToggle: () => void
+}) {
+  const disclosureIcon = expanded
+    ? <ChevronDown data-test-id={`conversation-branch-npc-expanded-icon-${id}`} size={15} />
+    : <ChevronRight data-test-id={`conversation-branch-npc-collapsed-icon-${id}`} size={15} />
+
+  return (
+    <div className="conversation-npc-group" data-test-id={`conversation-branch-npc-group-${id}`}>
+      <button
+        aria-expanded={expanded}
+        className="conversation-npc-title"
+        data-test-id={`conversation-branch-npc-toggle-${id}`}
+        type="button"
+        onClick={onToggle}
+      >
+        {disclosureIcon}
+        <UserRound data-test-id={`conversation-branch-npc-icon-${id}`} size={16} />
+        <strong data-test-id={`conversation-branch-npc-title-${id}`}>{label}</strong>
+        <Badge className="conversation-npc-count-badge" data-test-id={`conversation-branch-npc-count-${id}`}>
+          {conversationCount}
+        </Badge>
+        <span className="sr-only" data-test-id={`conversation-branch-npc-expanded-${id}`}>{expanded ? 'expanded' : 'collapsed'}</span>
+      </button>
+      {expanded && (
+        <div className="conversation-title-list" data-test-id={`conversation-branch-npc-conversations-${id}`}>
+          {conversations.map((conversation) => (
+            <ConversationTitleButton
+              key={conversation.id}
+              analysisIssueCount={analysisByConversation.get(conversation.id)?.issues.length ?? 0}
+              conversation={conversation}
+              selected={selectedConversationId === conversation.id}
+              onSelectConversation={onSelectConversation}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -141,7 +216,10 @@ function ConversationTitleButton({
     >
       <MessageSquareText size={15} />
       <span data-test-id={`conversation-branch-title-${conversation.id}`}>{conversation.title}</span>
-      <Badge className={analysisIssueCount > 0 ? 'danger' : 'ok'} data-test-id={`conversation-branch-status-${conversation.id}`}>
+      <Badge
+        className={`conversation-branch-status-badge ${analysisIssueCount > 0 ? 'danger' : 'ok'}`}
+        data-test-id={`conversation-branch-status-${conversation.id}`}
+      >
         {analysisIssueCount > 0 ? `${analysisIssueCount} 问题` : '正常'}
       </Badge>
     </button>

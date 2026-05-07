@@ -176,8 +176,29 @@
 }
 
 .conversation-npc-title {
+  width: 100%;
+  justify-content: flex-start;
   padding: 6px 2px;
   color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+.conversation-npc-title:hover {
+  background: var(--muted);
+}
+
+.conversation-npc-title strong {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.conversation-npc-count-badge {
+  flex: 0 0 auto;
 }
 
 .conversation-title-row {
@@ -210,6 +231,12 @@
   padding-right: 0;
   padding-left: 0;
   white-space: nowrap;
+}
+
+.conversation-title-row .conversation-branch-status-badge {
+  padding-right: 8px;
+  padding-left: 8px;
+  border-radius: 8px;
 }
 
 .conversation-node-card p {
