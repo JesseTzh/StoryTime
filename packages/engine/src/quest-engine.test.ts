@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { applyEffects } from './effect-engine'
+import { evaluateCondition } from './condition-engine'
 import { createInitialRuntimeState } from './initial-state'
 import { completeQuest, getQuestEntries, resolveQuestCompletions, startQuest } from './quest-engine'
 import { makeBaseInteractionPack } from './test-content-pack'
@@ -42,5 +43,13 @@ describe('quest engine', () => {
     applyEffects(pack, state, [{ type: 'fail_quest', questId: 'quest_search_test' }])
 
     expect(state.worldState.quests.quest_search_test?.status).toBe('failed')
+  })
+
+  it('evaluates quest runtime status condition paths', () => {
+    const pack = makeBaseInteractionPack()
+    const started = startQuest(pack, createInitialRuntimeState(pack, 'identity_test'), 'quest_search_test')
+
+    expect(evaluateCondition({ fact: 'quests.quest_search_test.status', equals: 'active' }, started.state)).toBe(true)
+    expect(evaluateCondition({ fact: 'quests.quest_search_test.status', equals: 'completed' }, started.state)).toBe(false)
   })
 })

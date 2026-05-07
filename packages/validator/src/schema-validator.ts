@@ -106,6 +106,17 @@ export function validateSchema(pack: ContentPack): ValidationIssue[] {
     if (!quest.sourceNpcId) issues.push(issue('error', 'schema_error', 'quest.sourceNpcId 必填', quest.id, 'sourceNpcId'))
     if (!quest.completion || !QUEST_COMPLETION_TYPES.includes(quest.completion.type)) issues.push(issue('error', 'schema_error', 'quest.completion 必须定义合法完成方式', quest.id, 'completion'))
     if (!Array.isArray(quest.rewardIds) || quest.rewardIds.length === 0) issues.push(issue('error', 'schema_error', 'quest.rewardIds 必须至少包含一个奖励', quest.id, 'rewardIds'))
+    if (quest.objectives !== undefined) {
+      if (!Array.isArray(quest.objectives)) {
+        issues.push(issue('error', 'schema_error', 'quest.objectives 必须是数组', quest.id, 'objectives'))
+      } else {
+        for (const objective of quest.objectives) {
+          if (!objective.id || !objective.title || !objective.description || !objective.conditions) {
+            issues.push(issue('error', 'schema_error', 'quest.objectives 每项必须包含 id、title、description、conditions', quest.id, 'objectives'))
+          }
+        }
+      }
+    }
   }
 
   for (const reward of Array.isArray(pack.rewards) ? pack.rewards : []) {

@@ -1,14 +1,18 @@
 personality:
-  kindness: 65
-  courage: 45
-  greed: 5
-  loyalty: 70
-  suspicion: 25
-  responsibility: 85
+  kindness: 45
+  courage: 60
+  greed: 0
+  loyalty: 75
+  suspicion: 70
+  responsibility: 95
 state:
   available: true
+  alive: true
 goals:
-  - 让今夜经过驿站的旅人看清路口。
+  - 让抵达者按三段规则点亮雾灯。
+  - 在雾换人前确认自己是否还能离开守灯人的位置。
 secrets:
-  - id: secret_old_mistake
-    content: 他曾经挂错过一次路签，所以不愿再把雾天当成小事。
+  - id: secret_keeper_replacement
+    content: 守灯人会在任务失败时被雾替换，新的守灯人就是未能离开驿站的人。
+  - id: secret_old_identity
+    content: 沈灯曾是另一名过路人，他已忘记自己原本的名字。

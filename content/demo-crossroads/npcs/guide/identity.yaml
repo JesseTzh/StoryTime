@@ -5,3 +5,5 @@ identity: 守灯人
 tier: core
 faction: faction_waykeepers
 location: loc_crossroads
+interactionIds:
+  - interaction_deliver_lamp_box

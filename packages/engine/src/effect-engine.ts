@@ -1,5 +1,6 @@
 import type { ContentPack, Effect, GameLog, GameRuntimeState } from '@tss/schema'
 import { evaluateCondition } from './condition-engine'
+import { buildEndingResult } from './ending-engine'
 import { failQuestInPlace, startQuestInPlace } from './quest-engine'
 import { changeNumberByPath, clampVariable, ensureRelationship, makeLog, setByPath } from './state-utils'
 
@@ -83,6 +84,20 @@ export function applyEffect(pack: ContentPack, state: GameRuntimeState, effect: 
         state.worldState.pendingEventIds.push(effect.eventId)
       }
       logs.push(makeLog(state, 'event', `事件进入待触发队列：${effect.eventId}`))
+      break
+    }
+    case 'trigger_ending': {
+      const ending = pack.endings.find((item) => item.id === effect.endingId)
+      if (!ending) {
+        logs.push(makeLog(state, 'system', `结局不存在：${effect.endingId}`))
+        break
+      }
+      if (!evaluateCondition(ending.conditions, state)) {
+        logs.push(makeLog(state, 'ending', `结局条件未满足：${ending.name}`, ending.id))
+        break
+      }
+      state.endingResult = buildEndingResult(ending, state)
+      logs.push(makeLog(state, 'ending', `结局：${ending.name}`, ending.summary))
       break
     }
     case 'start_conversation': {

@@ -2,4 +2,5 @@ initialState:
   playerLocationId: loc_crossroads
   selectedTileId: tile_crossroads
   facts: {}
+  tileOverrides: {}
 dailyDriftRules: []

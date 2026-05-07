@@ -1,17 +1,163 @@
-- id: interaction_check_signal
-  name: 校准雾灯
-  description: 擦净铜镜，调整灯芯高度，让路口信号更清晰。
+- id: interaction_morning_mirror
+  name: 晨时擦镜
+  description: 按守灯人的第一条规则，用背面对着雾灯擦净铜镜，不看镜中多出来的脸。
   type: environment
   environmentType: search
-  targetType: location
-  targetId: loc_crossroads
+  targetType: building
+  targetId: building_lamp_room
   cost:
     actionPoints: 1
-    stamina: 5
+    stamina: 6
+  conditions:
+    all:
+      - fact: time.day
+        equals: 1
+      - fact: time.segment
+        equals: morning
+      - fact: facts.guide_briefed
+        equals: true
+      - fact: facts.ritual_morning_done
+        exists: false
   effects:
-    - type: change_variable
-      key: signal_clarity
-      delta: 20
+    - type: add_item
+      itemId: item_mirror_salt
+      count: 1
     - type: add_fact
-      key: signal_checked
+      key: ritual_morning_done
       value: true
+    - type: change_variable
+      key: lamp_readiness
+      delta: 25
+    - type: change_variable
+      key: rule_integrity
+      delta: 15
+- id: interaction_noon_shadow
+  name: 正午定影
+  description: 在影子最短时量出灯架的第十三根影线，把它缠到封灯匣的铜扣上。
+  type: environment
+  environmentType: search
+  targetType: building
+  targetId: building_lamp_room
+  cost:
+    actionPoints: 1
+    stamina: 6
+  conditions:
+    all:
+      - fact: time.day
+        equals: 1
+      - fact: time.segment
+        equals: noon
+      - fact: facts.ritual_morning_done
+        equals: true
+      - fact: facts.ritual_noon_done
+        exists: false
+  effects:
+    - type: add_item
+      itemId: item_shadow_thread
+      count: 1
+    - type: add_fact
+      key: ritual_noon_done
+      value: true
+    - type: change_variable
+      key: lamp_readiness
+      delta: 25
+    - type: change_variable
+      key: fog_pressure
+      delta: -10
+- id: interaction_night_wick
+  name: 夜里封芯
+  description: 等雾中有人呼唤你的名字时不要应声，只从旧灯芯灰里拈出还能发冷的那一缕。
+  type: environment
+  environmentType: search
+  targetType: building
+  targetId: building_lamp_room
+  cost:
+    actionPoints: 1
+    stamina: 8
+  conditions:
+    all:
+      - fact: time.day
+        equals: 1
+      - fact: time.segment
+        equals: night
+      - fact: facts.ritual_noon_done
+        equals: true
+      - fact: facts.ritual_night_done
+        exists: false
+  effects:
+    - type: add_item
+      itemId: item_ashen_wick
+      count: 1
+    - type: add_item
+      itemId: item_sealed_lamp_box
+      count: 1
+    - type: add_fact
+      key: ritual_night_done
+      value: true
+    - type: add_fact
+      key: sealed_lamp_box_ready
+      value: true
+    - type: change_variable
+      key: lamp_readiness
+      delta: 30
+    - type: change_variable
+      key: rule_integrity
+      delta: 20
+- id: interaction_deliver_lamp_box
+  name: 交付封灯匣
+  description: 次日把封灯匣交给守灯人，让他确认三件封灯物都没有被雾调换。
+  type: give
+  targetType: npc
+  targetId: npc_guide
+  itemId: item_sealed_lamp_box
+  itemCount: 1
+  cost:
+    actionPoints: 1
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: facts.sealed_lamp_box_ready
+        equals: true
+      - fact: facts.lamp_box_delivered
+        exists: false
+  acceptedEffects:
+    - type: add_fact
+      key: lamp_box_delivered
+      value: true
+    - type: change_relationship
+      source: player
+      target: npc_guide
+      path: trust
+      delta: 15
+- id: interaction_light_fog_lamp
+  name: 点亮雾灯
+  description: 在守灯人的注视下把封过的夜灰灯芯压入灯盏，直到雾里所有多余的脚步声同时停下。
+  type: environment
+  environmentType: search
+  targetType: building
+  targetId: building_lamp_room
+  cost:
+    actionPoints: 1
+    stamina: 10
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: quests.quest_deliver_lamp_box.status
+        equals: completed
+      - fact: facts.lamp_lit
+        exists: false
+  effects:
+    - type: add_fact
+      key: lamp_lit
+      value: true
+    - type: add_fact
+      key: station_left
+      value: true
+    - type: change_variable
+      key: lamp_readiness
+      delta: 20
+    - type: change_variable
+      key: fog_pressure
+      delta: -35

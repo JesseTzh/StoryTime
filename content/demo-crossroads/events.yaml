@@ -1,15 +1,89 @@
-- id: event_first_signal
-  name: 第一束清光
+- id: event_rules_received
+  name: 三条雾灯规则
+  type: world_state_event
+  participantIds:
+    - npc_guide
+  trigger:
+    fact: facts.guide_briefed
+    equals: true
+  description: 守灯人的话被驿站记下：晨时不看镜中脸，正午不踩第十三根影，夜里不回应雾中的名字。
+  effects:
+    - type: change_variable
+      key: rule_integrity
+      delta: 5
+  followupEventIds: []
+- id: event_morning_salt_taken
+  name: 晨镜盐入匣
   type: location_event
   locationId: loc_crossroads
   participantIds:
     - npc_guide
   trigger:
-    fact: variables.signal_clarity
-    greater_than_or_equal: 60
-  description: 雾灯终于照出一条稳定光带，路口记录下这次校准结果。
+    fact: facts.ritual_morning_done
+    equals: true
+  description: 铜镜背面渗出白盐，像一圈没有瞳孔的眼睛，在你移开目光后慢慢干裂。
   effects:
+    - type: change_variable
+      key: fog_pressure
+      delta: -5
+  followupEventIds: []
+- id: event_noon_shadow_bound
+  name: 正午影线缠扣
+  type: location_event
+  locationId: loc_crossroads
+  participantIds:
+    - npc_guide
+  trigger:
+    fact: facts.ritual_noon_done
+    equals: true
+  description: 第十三根影线被缠住时，路口尽头有一条从未存在过的岔路无声合拢。
+  effects:
+    - type: change_variable
+      key: rule_integrity
+      delta: 5
+  followupEventIds: []
+- id: event_night_wick_sealed
+  name: 夜灰灯芯封匣
+  type: location_event
+  locationId: loc_crossroads
+  participantIds:
+    - npc_guide
+  trigger:
+    fact: facts.ritual_night_done
+    equals: true
+  description: 封灯匣合上的一刻，雾里所有声音都改成了你的嗓音，随后又像被门关在外面。
+  effects:
+    - type: change_variable
+      key: fog_pressure
+      delta: -10
+  followupEventIds: []
+- id: event_keeper_replaced
+  name: 新守灯人
+  type: world_state_event
+  participantIds:
+    - npc_guide
+  trigger:
+    all:
+      - fact: time.day
+        greater_than_or_equal: 2
+      - fact: time.segment
+        equals: night
+      - fact: facts.lamp_lit
+        exists: false
+  description: 第二天夜里，雾灯仍未亮起。旧守灯人的身影被雾擦掉，灯室门后只剩你的影子。
+  effects:
+    - type: fail_quest
+      questId: quest_prepare_lamp_rite
+    - type: fail_quest
+      questId: quest_deliver_lamp_box
+    - type: fail_quest
+      questId: quest_light_fog_lamp
     - type: add_fact
-      key: signal_event_seen
+      key: player_became_keeper
       value: true
+    - type: change_player_attribute
+      attribute: reputation
+      delta: -5
+    - type: trigger_ending
+      endingId: ending_new_lamp_keeper
   followupEventIds: []

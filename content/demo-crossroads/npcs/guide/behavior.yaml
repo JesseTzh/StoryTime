@@ -1,14 +1,58 @@
 schedule:
-  - id: guide_schedule_morning
+  - id: guide_schedule_morning_day1
     segment: morning
-    location: loc_crossroads
-    activity: 擦拭雾灯铜镜
-  - id: guide_schedule_noon
+    locationId: loc_crossroads
+    activity: 在雾灯小屋门口等抵达者听规则
+    dayRange:
+      from: 1
+      to: 1
+  - id: guide_schedule_noon_day1
     segment: noon
-    location: loc_crossroads
-    activity: 检查路签绳结
-  - id: guide_schedule_night
+    locationId: loc_crossroads
+    activity: 守着灯架下多出来的影子
+    dayRange:
+      from: 1
+      to: 1
+  - id: guide_schedule_night_day1
     segment: night
-    location: loc_crossroads
-    activity: 守着点亮的雾灯
-behaviorRules: []
+    locationId: loc_crossroads
+    activity: 数雾里呼唤玩家名字的声音
+    dayRange:
+      from: 1
+      to: 1
+  - id: guide_schedule_day2
+    segment: morning
+    locationId: loc_crossroads
+    activity: 等玩家交付封灯匣
+    dayRange:
+      from: 2
+      to: 2
+  - id: guide_schedule_day2_noon
+    segment: noon
+    locationId: loc_crossroads
+    activity: 检查封灯匣铜扣是否仍有人的温度
+    dayRange:
+      from: 2
+      to: 2
+  - id: guide_schedule_day2_night
+    segment: night
+    locationId: loc_crossroads
+    activity: 在雾灯前等待最后结果
+    dayRange:
+      from: 2
+      to: 2
+behaviorRules:
+  - id: guide_behavior_warn_once
+    name: 低声重申规则
+    priority: 10
+    conditions:
+      all:
+        - fact: facts.guide_briefed
+          equals: true
+        - fact: facts.guide_warned_once
+          exists: false
+    effects:
+      - type: add_fact
+        key: guide_warned_once
+        value: true
+    designNote: 沈灯只提醒一次，之后不再替玩家承担规则失误。

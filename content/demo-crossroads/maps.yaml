@@ -14,8 +14,12 @@
       npcIds:
         - npc_guide
       eventIds:
-        - event_first_signal
+        - event_rules_received
+        - event_morning_salt_taken
+        - event_noon_shadow_bound
+        - event_night_wick_sealed
+        - event_keeper_replaced
       discovered: true
       visible: true
       blocked: false
-      dangerLevel: 1
+      dangerLevel: 3

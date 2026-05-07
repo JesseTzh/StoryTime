@@ -87,6 +87,27 @@ describe('interaction engine', () => {
     expect(result.state.worldState.variables.rapport).toBe(5)
   })
 
+  test('quest reward effects can trigger an ending immediately after interaction', () => {
+    const pack = makePack()
+    pack.endings.unshift({
+      id: 'ending_rapport',
+      name: 'Rapport Ending',
+      priority: 50,
+      conditions: { fact: 'variables.rapport', greater_than_or_equal: 5 },
+      summary: 'Rapport reached the ending threshold.',
+      causalChainRules: [{ variable: 'rapport', operator: 'greater_than_or_equal', value: 5, text: 'Rapport was high enough.' }],
+    })
+    pack.rewards.find((reward) => reward.id === 'reward_rapport_test')?.effects.push({ type: 'trigger_ending', endingId: 'ending_rapport' })
+    const initial = createInitialRuntimeState(pack, 'identity_test')
+    initial.player.inventory.item_letter = 1
+    const active = startQuest(pack, initial, 'quest_give_test').state
+
+    const result = executeInteraction(pack, active, 'interaction_give_letter')
+
+    expect(result.ok).toBe(true)
+    expect(result.state.endingResult?.ending.id).toBe('ending_rapport')
+  })
+
   test('combat victory damages player defeats npc and completes combat quest', () => {
     const pack = makePack()
     const active = startQuest(pack, createInitialRuntimeState(pack, 'identity_test'), 'quest_combat_test').state

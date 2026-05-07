@@ -292,6 +292,30 @@ test('validator reports invalid fact paths, duplicate ids, and runtime reference
   ).toBe(true)
 })
 
+test('validator accepts quest status conditions and validates quest objective shape', () => {
+  const pack = makeValidationPack()
+  pack.events[0].trigger = { fact: 'quests.quest_test.status', equals: 'completed' }
+  pack.quests[0].objectives = [
+    {
+      id: 'objective_search',
+      title: 'Search the location',
+      description: 'Search once to advance the quest.',
+      conditions: { fact: 'facts.location_searched', equals: true },
+    },
+  ]
+
+  expect(validateContentPack(pack).errors.some((issue) => issue.type === 'fact_path_error')).toBe(false)
+
+  const badObjectivePack = makeValidationPack()
+  badObjectivePack.quests[0].objectives = [{ id: '', title: '', description: '' }]
+
+  expect(
+    validateContentPack(badObjectivePack).errors.some(
+      (issue) => issue.type === 'schema_error' && issue.path === 'objectives',
+    ),
+  ).toBe(true)
+})
+
 test('validator reports invalid conversation graph references', () => {
   const badEntryPack = makeValidationPack()
   badEntryPack.conversations[0].entryNodeId = 'missing_node'

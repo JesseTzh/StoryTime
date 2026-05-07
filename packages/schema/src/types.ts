@@ -17,6 +17,7 @@ export type EffectType =
   | 'add_fact'
   | 'remove_fact'
   | 'trigger_event'
+  | 'trigger_ending'
   | 'start_conversation'
   | 'move_npc'
   | 'move_player'
@@ -36,6 +37,7 @@ export type WorldDefinition = {
   name: string
   summary: string
   editorBackground: string
+  defaultPack?: boolean
   maxDays: number
   segments: TimeSegment[]
   actionPointsPerSegment: number
@@ -252,12 +254,20 @@ export type QuestCompletion =
   | { type: 'combat'; targetType: InteractionTargetType; targetId: string; result: 'victory'; interactionId?: string }
   | { type: 'environment'; environmentType: EnvironmentInteractionType; targetType: InteractionTargetType; targetId: string; interactionId?: string }
 
+export type QuestObjective = {
+  id: string
+  title: string
+  description: string
+  conditions: ConditionGroup
+}
+
 export type Quest = {
   id: string
   title: string
   description: string
   sourceNpcId: string
   conditions?: ConditionGroup
+  objectives?: QuestObjective[]
   completion: QuestCompletion
   rewardIds: string[]
 }
@@ -302,6 +312,7 @@ export type Effect =
   | { type: 'add_fact'; key: string; value: unknown }
   | { type: 'remove_fact'; key: string }
   | { type: 'trigger_event'; eventId: string }
+  | { type: 'trigger_ending'; endingId: string }
   | { type: 'start_conversation'; conversationId: string }
   | { type: 'move_npc'; npcId: string; locationId: string }
   | { type: 'move_player'; locationId: string }

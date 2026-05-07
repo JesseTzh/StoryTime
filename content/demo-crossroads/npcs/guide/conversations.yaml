@@ -1,34 +1,97 @@
-- id: conversation_signal_briefing
+- id: conversation_keeper_rules
   npcId: npc_guide
-  title: 询问雾灯
+  title: 询问雾灯规则
   entryNodeId: node_entry
-  priority: 5
+  priority: 20
+  conditions:
+    fact: facts.guide_briefed
+    exists: false
   nodes:
     - id: node_entry
       speaker: npc_guide
-      text: 雾从南坡上来了。若灯镜再暗一点，夜里的人就会把旧矿路当成官道。
+      text: 进了驿站就别急着走。雾已经记住你的脚步，只有雾灯亮起，它才会承认你不是这里的人。
       replies:
-        - id: reply_ask_signal
-          text: 我能帮你先看哪里？
-          nextNodeId: node_signal
-        - id: reply_leave
-          text: 我先看看路口。
+        - id: reply_ask_rules
+          text: 告诉我规则。
+          nextNodeId: node_rules
+        - id: reply_refuse_rules
+          text: 我不信这些。
           endConversation: true
-    - id: node_signal
+    - id: node_rules
       speaker: npc_guide
-      text: 先擦铜镜，再把灯芯升半寸。若还有余力，就把备用路签挂到北侧木桩上。
+      text: 第一，晨时擦镜，不看镜里多出来的脸。第二，正午定影，不踩第十三根影线。第三，夜里封芯，听见自己的名字也不要应。三样都做完，封灯匣会自己合上。
       replies:
-        - id: reply_take_note
-          text: 我记下了。
+        - id: reply_accept_rules
+          text: 我按规则做。
           endConversation: true
           effects:
             - type: add_fact
               key: guide_briefed
               value: true
             - type: start_quest
-              questId: quest_mark_safe_path
+              questId: quest_prepare_lamp_rite
             - type: change_relationship
               source: player
               target: npc_guide
               path: trust
               delta: 5
+- id: conversation_lamp_box_handoff
+  npcId: npc_guide
+  title: 交付前确认
+  entryNodeId: node_handoff
+  priority: 30
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: facts.sealed_lamp_box_ready
+        equals: true
+      - fact: facts.lamp_box_delivered
+        exists: false
+  nodes:
+    - id: node_handoff
+      speaker: npc_guide
+      text: 你带回来了。别打开匣子，只把它递给我。若里面少了任意一样，雾会用你的影子补上。
+      replies:
+        - id: reply_ready_to_deliver
+          text: 我会把封灯匣交给你。
+          endConversation: true
+          effects:
+            - type: add_fact
+              key: handoff_confirmed
+              value: true
+- id: conversation_after_delivery
+  npcId: npc_guide
+  title: 最后一盏灯
+  entryNodeId: node_after_delivery
+  priority: 25
+  conditions:
+    all:
+      - fact: quests.quest_deliver_lamp_box.status
+        equals: completed
+      - fact: facts.lamp_lit
+        exists: false
+  nodes:
+    - id: node_after_delivery
+      speaker: npc_guide
+      text: 灯芯认得你了。现在去点灯，别等到夜里。夜一到，驿站要的就不是灯油，而是守灯人。
+      replies:
+        - id: reply_go_light_lamp
+          text: 我现在去点亮雾灯。
+          endConversation: true
+- id: conversation_lamp_lit
+  npcId: npc_guide
+  title: 离站之前
+  entryNodeId: node_lamp_lit
+  priority: 10
+  conditions:
+    fact: facts.lamp_lit
+    equals: true
+  nodes:
+    - id: node_lamp_lit
+      speaker: npc_guide
+      text: 路开了。出去后别回头，别数脚步，别答应雾里任何一个叫你送信的人。
+      replies:
+        - id: reply_leave_station
+          text: 我记住了。
+          endConversation: true

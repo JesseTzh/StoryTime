@@ -20,7 +20,10 @@ function validateConditionPaths(pack: ContentPack, condition: ConditionGroup | u
 export function validateFactPaths(pack: ContentPack): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   for (const interaction of Array.isArray(pack.interactions) ? pack.interactions : []) issues.push(...validateConditionPaths(pack, interaction.conditions, interaction.id))
-  for (const quest of Array.isArray(pack.quests) ? pack.quests : []) issues.push(...validateConditionPaths(pack, quest.conditions, quest.id))
+  for (const quest of Array.isArray(pack.quests) ? pack.quests : []) {
+    issues.push(...validateConditionPaths(pack, quest.conditions, quest.id))
+    for (const objective of quest.objectives ?? []) issues.push(...validateConditionPaths(pack, objective.conditions, objective.id))
+  }
   for (const event of pack.events) issues.push(...validateConditionPaths(pack, event.trigger, event.id))
   for (const conversation of pack.conversations) {
     issues.push(...validateConditionPaths(pack, conversation.conditions, conversation.id))

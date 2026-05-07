@@ -128,6 +128,8 @@ export async function writeContentPackArtifacts(
 
 async function resolveDefaultPackId(packs: ContentPack[], staticManifestPath: string): Promise<string> {
   const packIds = new Set(packs.map((pack) => pack.packId))
+  const configuredDefault = packs.find((pack) => pack.world.defaultPack === true)
+  if (configuredDefault) return configuredDefault.packId
   if (existsSync(staticManifestPath)) {
     try {
       const existingManifest = JSON.parse(await readFile(staticManifestPath, 'utf8')) as { defaultPackId?: unknown }

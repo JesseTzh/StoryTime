@@ -1,4 +1,4 @@
 - id: faction_waykeepers
-  name: 守路人
-  description: 负责维护路标、雾灯和驿站秩序的小团体。
-  stanceToPlayer: 10
+  name: 守灯人
+  description: 被雾灯驿站留下、负责维持三段规则的人。人数从来只有一个。
+  stanceToPlayer: 0

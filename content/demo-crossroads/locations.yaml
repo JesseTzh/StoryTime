@@ -3,16 +3,19 @@
   type: roadside
   tags:
     - crossroads
-    - signal
+    - fog_rule
+    - lamp_rite
   state:
     is_accessible: true
     discovered: true
   descriptions:
-    default: 一条旧路在这里分成两岔，木杆上的雾灯被潮气浸得发暗。
-    morning: 晨雾贴着地面，路口还能看清远处的石标。
-    noon: 雾气稍退，灯室里传来擦拭铜镜的轻响。
-    night: 夜色压低，雾灯的光线决定路人能走多远。
+    default: 旧路在这里分成两岔，木杆上的雾灯垂着冷光，像一只尚未睁开的眼。
+    morning: 晨雾贴着地面，灯室门槛外有三道不属于人的脚印，天亮后仍没有散。
+    noon: 日头悬在雾后，灯架的影子比实际木杆多出一根，正好指向小屋门缝。
+    night: 夜色压低，雾里有人用熟人的声音叫门，雾灯却还没有真正亮起。
   buildingIds:
     - building_lamp_room
   interactionIds:
-    - interaction_check_signal
+    - interaction_morning_mirror
+    - interaction_noon_shadow
+    - interaction_night_wick

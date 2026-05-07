@@ -15,6 +15,7 @@ export function getFactValue(state: GameRuntimeState, factPath: string): unknown
   if (parts[0] === 'time') return getByPath(state.time, parts.slice(1).join('.'))
   if (parts[0] === 'player') return getByPath(state.player, parts.slice(1).join('.'))
   if (parts[0] === 'variables') return state.worldState.variables[parts[1]]
+  if (parts[0] === 'quests') return getByPath(state.worldState.quests[parts[1]], parts.slice(2).join('.'))
   if (parts[0] === 'facts') return state.worldState.facts[parts.slice(1).join('.')]
 
   if (parts[0] === 'location') {
@@ -104,6 +105,11 @@ export function canResolveFactPath(pack: ContentPack, factPath: string): boolean
     return false
   }
   if (parts[0] === 'variables') return parts.length === 2 && pack.variables.some((item) => item.key === parts[1])
+  if (parts[0] === 'quests') {
+    if (!pack.quests.some((item) => item.id === parts[1])) return false
+    return parts.length === 3 && ['id', 'status', 'startedAt', 'completedAt'].includes(parts[2])
+      || parts.length === 4 && ['startedAt', 'completedAt'].includes(parts[2]) && ['day', 'segment'].includes(parts[3])
+  }
   if (parts[0] === 'facts') return Boolean(parts[1])
   if (parts[0] === 'location') {
     if (!pack.locations.some((item) => item.id === parts[1])) return false

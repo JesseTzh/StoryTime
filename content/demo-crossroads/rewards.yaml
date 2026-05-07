@@ -1,10 +1,36 @@
-- id: reward_signal_route_marked
-  name: 路标清晰
-  description: 旅人安全提升。
+- id: reward_rite_prepared
+  name: 封灯物齐备
+  description: 三段规则完成，封灯匣已经可以交付。
   effects:
-    - type: change_variable
-      key: traveler_safety
-      delta: 15
     - type: add_fact
-      key: safe_path_marked
+      key: rite_prepared
       value: true
+    - type: start_quest
+      questId: quest_deliver_lamp_box
+    - type: change_variable
+      key: rule_integrity
+      delta: 10
+- id: reward_lamp_box_accepted
+  name: 守灯人验匣
+  description: 守灯人确认封灯匣没有被雾调换，最后点灯规则开放。
+  effects:
+    - type: add_fact
+      key: keeper_accepted_lamp_box
+      value: true
+    - type: start_quest
+      questId: quest_light_fog_lamp
+    - type: change_variable
+      key: lamp_readiness
+      delta: 10
+- id: reward_station_left
+  name: 雾灯点亮
+  description: 雾灯重新划开道路，驿站承认你仍是过路人。
+  effects:
+    - type: add_fact
+      key: fog_lamp_rite_completed
+      value: true
+    - type: change_variable
+      key: fog_pressure
+      delta: -20
+    - type: trigger_ending
+      endingId: ending_fog_lamp_departure

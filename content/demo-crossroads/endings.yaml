@@ -1,26 +1,49 @@
-- id: ending_lamp_guides_way
-  name: 雾灯指路
-  priority: 10
+- id: ending_fog_lamp_departure
+  name: 雾灯开路
+  priority: 100
   conditions:
-    fact: variables.traveler_safety
-    greater_than_or_equal: 60
-  summary: 备用路签和雾灯一起稳住了岔路，夜行旅人顺利穿过驿站。
+    fact: facts.fog_lamp_rite_completed
+    equals: true
+  summary: 雾灯被重新点亮，白雾向路两侧退开。守灯人没有送你，只在灯室门口提醒你离开后不要回头数自己的脚步。
   causalChainRules:
-    - fact: safe_path_marked
-      text: 你挂出了备用路签，让后来者能在雾中确认方向。
-    - variable: signal_clarity
+    - fact: guide_briefed
+      text: 你先听完守灯人的规则，没有把驿站当成普通歇脚处。
+    - fact: ritual_night_done
+      text: 晨镜盐、正午影线和夜灰灯芯都进入封灯匣。
+    - fact: lamp_box_delivered
+      text: 次日你把封灯匣交给守灯人验看。
+    - fact: lamp_lit
+      text: 雾灯重新亮起，驿站承认你仍是过路人。
+    - variable: lamp_readiness
       operator: greater_than_or_equal
-      value: 60
-      text: 雾灯被校准后，路口信号足够清晰。
-- id: ending_fog_remains
-  name: 雾色未散
-  priority: 1
+      value: 80
+      text: 雾灯整备已足以压住路外白雾。
+- id: ending_new_lamp_keeper
+  name: 雾中守灯
+  priority: 90
   conditions:
-    fact: time.day
-    greater_than_or_equal: 2
-  summary: 雾灯仍能发光，但路口标记不够完整，旅人只能放慢脚步摸索前行。
+    fact: facts.player_became_keeper
+    equals: true
+  summary: 你没有在期限前点亮雾灯。雾把守灯人的名字从木牌上抹去，又把你的名字刻了上去。此后你站在无垠雾中，等待下一个敲门的人。
   causalChainRules:
-    - variable: traveler_safety
+    - fact: guide_briefed
+      text: 你知道规则，却没能在第二天夜前完成它们。
+    - variable: fog_pressure
+      operator: greater_than_or_equal
+      value: 20
+      text: 雾压没有被雾灯完全压回路外。
+- id: ending_lost_before_rules
+  name: 未听规则
+  priority: 90
+  conditions:
+    all:
+      - fact: time.day
+        greater_than_or_equal: 2
+      - fact: facts.guide_briefed
+        exists: false
+  summary: 你没有问清守灯人的规则。第二天雾色翻上台阶，驿站再也分不清你是客人，还是早该留下的人。
+  causalChainRules:
+    - variable: rule_integrity
       operator: less_than
-      value: 60
-      text: 旅人的安全准备仍然不足。
+      value: 40
+      text: 规则从一开始就没有被完整建立。

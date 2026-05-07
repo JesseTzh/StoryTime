@@ -16,6 +16,7 @@ function makeSets(pack: ContentPack) {
     events: new Set(pack.events.map((item) => item.id)),
     conversations: new Set(pack.conversations.map((item) => item.id)),
     items: new Set(pack.items.map((item) => item.id)),
+    endings: new Set(pack.endings.map((item) => item.id)),
     variables: new Set(pack.variables.map((item) => item.key)),
     tiles: new Set(pack.maps.flatMap((map) => map.tiles.map((tile) => tile.id))),
   }
@@ -37,6 +38,7 @@ function validateEffectReference(effect: Effect, pack: ContentPack, targetId: st
   if (effect.type === 'move_player' && !sets.locations.has(effect.locationId)) issues.push(issue('error', 'reference_error', `引用了不存在的地点：${effect.locationId}`, targetId))
   if ((effect.type === 'add_item' || effect.type === 'remove_item') && !sets.items.has(effect.itemId)) issues.push(issue('error', 'reference_error', `引用了不存在的物品：${effect.itemId}`, targetId))
   if (effect.type === 'trigger_event' && !sets.events.has(effect.eventId)) issues.push(issue('error', 'reference_error', `引用了不存在的事件：${effect.eventId}`, targetId))
+  if (effect.type === 'trigger_ending' && !sets.endings.has(effect.endingId)) issues.push(issue('error', 'reference_error', `引用了不存在的结局：${effect.endingId}`, targetId))
   if (effect.type === 'start_conversation' && !sets.conversations.has(effect.conversationId)) issues.push(issue('error', 'reference_error', `引用了不存在的会话：${effect.conversationId}`, targetId))
   if ((effect.type === 'start_quest' || effect.type === 'fail_quest') && !sets.quests.has(effect.questId)) issues.push(issue('error', 'reference_error', `引用了不存在的任务：${effect.questId}`, targetId))
   if (effect.type === 'discover_location' && !sets.locations.has(effect.locationId)) issues.push(issue('error', 'reference_error', `引用了不存在的地点：${effect.locationId}`, targetId))

@@ -1,12 +1,18 @@
-- key: signal_clarity
-  name: 雾灯清晰度
-  description: 雾灯信号是否足以指引路人。
-  initialValue: 40
+- key: lamp_readiness
+  name: 雾灯整备
+  description: 雾灯是否具备重新点亮的条件。
+  initialValue: 0
   min: 0
   max: 100
-- key: traveler_safety
-  name: 旅人安全
-  description: 即将经过驿站的旅人安全程度。
-  initialValue: 50
+- key: rule_integrity
+  name: 规则完整
+  description: 玩家遵守驿站规则的程度。
+  initialValue: 30
+  min: 0
+  max: 100
+- key: fog_pressure
+  name: 雾压
+  description: 无垠雾对驿站边界的侵蚀强度。
+  initialValue: 45
   min: 0
   max: 100
