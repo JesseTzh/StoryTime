@@ -13,6 +13,7 @@ description: Use when creating, expanding, reviewing, repairing, or importing St
 
 必须遵守：
 
+- 在生成剧情内容时，需要先输出 md 类型的故事背景/剧情大纲，由开发者审核后再转化为 yaml 类型的游戏内容文件
 - 剧情内容生产仅修改 `content/<pack>` 下的文件；不要修改项目内的任何代码文件
 - 生成剧情脚本内容时，必须严格按照 Skill 内定义的模板进行生成。
 
@@ -20,7 +21,9 @@ description: Use when creating, expanding, reviewing, repairing, or importing St
 
 首先判断用户意图：是创建全新的故事，还是续写、扩展已有故事线。
 
-如果是全新故事，则按照下文生成流程逐步执行；如果是续写或扩展已有故事线，则直接跳转至对应阶段，并读取相关文档后继续处理。
+如果是全新故事，则按照下文生成流程逐步执行；
+
+如果是续写或扩展已有故事线，则直接跳转至对应阶段，并读取相关文档后继续处理。
 
 ## 生成流程
 
