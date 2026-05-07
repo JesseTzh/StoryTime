@@ -137,7 +137,10 @@ export function validateReferences(pack: ContentPack): ValidationIssue[] {
     for (const node of conversation.nodes) {
       if (node.speaker !== 'player' && !sets.npcs.has(node.speaker)) issues.push(issue('error', 'reference_error', `会话 speaker 不存在：${node.speaker}`, node.id))
       for (const effect of node.effects ?? []) issues.push(...validateEffectReference(effect, pack, node.id))
-      for (const reply of node.replies) for (const effect of reply.effects ?? []) issues.push(...validateEffectReference(effect, pack, reply.id))
+      for (const reply of node.replies) {
+        if (reply.itemCost && !sets.items.has(reply.itemCost.itemId)) issues.push(issue('error', 'reference_error', `引用了不存在的物品：${reply.itemCost.itemId}`, reply.id))
+        for (const effect of reply.effects ?? []) issues.push(...validateEffectReference(effect, pack, reply.id))
+      }
     }
   }
   const initialState = pack.runtime?.initialState

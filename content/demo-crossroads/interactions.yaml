@@ -1,5 +1,5 @@
 - id: interaction_morning_mirror
-  name: 晨时擦镜
+  name: 背灯擦镜
   description: 按守灯人的第一条规则，用背面对着雾灯擦净铜镜，不看镜中多出来的脸。
   type: environment
   environmentType: search
@@ -10,10 +10,6 @@
     stamina: 6
   conditions:
     all:
-      - fact: time.day
-        equals: 1
-      - fact: time.segment
-        equals: morning
       - fact: facts.guide_briefed
         equals: true
       - fact: facts.ritual_morning_done
@@ -32,8 +28,8 @@
       key: rule_integrity
       delta: 15
 - id: interaction_noon_shadow
-  name: 正午定影
-  description: 在影子最短时量出灯架的第十三根影线，把它缠到封灯匣的铜扣上。
+  name: 灯架定影
+  description: 量出灯架的第十三根影线，把它缠到封灯匣的铜扣上。
   type: environment
   environmentType: search
   targetType: building
@@ -43,11 +39,7 @@
     stamina: 6
   conditions:
     all:
-      - fact: time.day
-        equals: 1
-      - fact: time.segment
-        equals: noon
-      - fact: facts.ritual_morning_done
+      - fact: facts.guide_briefed
         equals: true
       - fact: facts.ritual_noon_done
         exists: false
@@ -65,8 +57,8 @@
       key: fog_pressure
       delta: -10
 - id: interaction_night_wick
-  name: 夜里封芯
-  description: 等雾中有人呼唤你的名字时不要应声，只从旧灯芯灰里拈出还能发冷的那一缕。
+  name: 灰里封芯
+  description: 雾中有人呼唤你的名字时不要应声，只从旧灯芯灰里拈出还能发冷的那一缕。
   type: environment
   environmentType: search
   targetType: building
@@ -76,11 +68,7 @@
     stamina: 8
   conditions:
     all:
-      - fact: time.day
-        equals: 1
-      - fact: time.segment
-        equals: night
-      - fact: facts.ritual_noon_done
+      - fact: facts.guide_briefed
         equals: true
       - fact: facts.ritual_night_done
         exists: false
@@ -103,33 +91,6 @@
     - type: change_variable
       key: rule_integrity
       delta: 20
-- id: interaction_deliver_lamp_box
-  name: 交付封灯匣
-  description: 次日把封灯匣交给守灯人，让他确认三件封灯物都没有被雾调换。
-  type: give
-  targetType: npc
-  targetId: npc_guide
-  itemId: item_sealed_lamp_box
-  itemCount: 1
-  cost:
-    actionPoints: 1
-  conditions:
-    all:
-      - fact: time.day
-        equals: 2
-      - fact: facts.sealed_lamp_box_ready
-        equals: true
-      - fact: facts.lamp_box_delivered
-        exists: false
-  acceptedEffects:
-    - type: add_fact
-      key: lamp_box_delivered
-      value: true
-    - type: change_relationship
-      source: player
-      target: npc_guide
-      path: trust
-      delta: 15
 - id: interaction_light_fog_lamp
   name: 点亮雾灯
   description: 在守灯人的注视下把封过的夜灰灯芯压入灯盏，直到雾里所有多余的脚步声同时停下。

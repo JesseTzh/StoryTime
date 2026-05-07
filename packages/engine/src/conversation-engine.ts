@@ -36,13 +36,14 @@ export function getAvailableConversationsForNpc(pack: ContentPack, state: GameRu
 }
 
 export function getConversationReplyAvailability(state: GameRuntimeState, reply: ConversationReply): ConversationAvailability {
+  const reasons: string[] = []
   if (!evaluateCondition(reply.conditions, state)) {
-    return {
-      available: false,
-      reasons: explainConditionFailures(reply.conditions, state).map((item) => `${item.fact ?? '条件'}：需要 ${item.expected}，当前 ${String(item.actual)}`),
-    }
+    reasons.push(...explainConditionFailures(reply.conditions, state).map((item) => `${item.fact ?? '条件'}：需要 ${item.expected}，当前 ${String(item.actual)}`))
   }
-  return { available: true, reasons: [] }
+  if (reply.itemCost && (state.player.inventory[reply.itemCost.itemId] ?? 0) < reply.itemCost.itemCount) {
+    reasons.push(`物品不足：${reply.itemCost.itemId}`)
+  }
+  return { available: reasons.length === 0, reasons }
 }
 
 export function startConversation(pack: ContentPack, state: GameRuntimeState, conversationId: string): { state: GameRuntimeState; logs: GameLog[]; ok: boolean; reasons: string[] } {
@@ -84,6 +85,10 @@ export function chooseConversationReply(pack: ContentPack, state: GameRuntimeSta
 
   const next = cloneState(state)
   const logs: GameLog[] = [makeLog(next, 'conversation', `选择回复：${reply.text}`, reply.id)]
+  if (reply.itemCost) {
+    next.player.inventory[reply.itemCost.itemId] = Math.max(0, (next.player.inventory[reply.itemCost.itemId] ?? 0) - reply.itemCost.itemCount)
+    logs.push(makeLog(next, 'player', `交付物品：${reply.itemCost.itemId} × ${reply.itemCost.itemCount}`))
+  }
   logs.push(...applyEffects(pack, next, reply.effects ?? []))
   recordConversationHistory(next, activeEntry.conversation.id, activeEntry.conversation.npcId, activeEntry.node.id, reply.id)
 

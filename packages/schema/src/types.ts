@@ -340,6 +340,10 @@ export type ConversationReply = {
   id: string
   text: string
   conditions?: ConditionGroup
+  itemCost?: {
+    itemId: string
+    itemCount: number
+  }
   effects?: Effect[]
   nextNodeId?: string
   endConversation?: boolean

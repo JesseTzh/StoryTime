@@ -35,6 +35,25 @@
               target: npc_guide
               path: trust
               delta: 5
+- id: conversation_prepare_lamp_reminder
+  npcId: npc_guide
+  title: 封灯匣之前
+  entryNodeId: node_prepare_lamp_reminder
+  priority: 15
+  conditions:
+    all:
+      - fact: facts.guide_briefed
+        equals: true
+      - fact: facts.sealed_lamp_box_ready
+        exists: false
+  nodes:
+    - id: node_prepare_lamp_reminder
+      speaker: npc_guide
+      text: 规则已经给你了。先把三件封灯物收齐，等封灯匣自己合上，明天再拿来找我。路不会提前认人，雾也不会。
+      replies:
+        - id: reply_prepare_lamp_ack
+          text: 我会带着封灯匣回来。
+          endConversation: true
 - id: conversation_lamp_box_handoff
   npcId: npc_guide
   title: 交付前确认
@@ -53,13 +72,24 @@
       speaker: npc_guide
       text: 你带回来了。别打开匣子，只把它递给我。若里面少了任意一样，雾会用你的影子补上。
       replies:
-        - id: reply_ready_to_deliver
-          text: 我会把封灯匣交给你。
+        - id: reply_deliver_lamp_box
+          text: 我把封灯匣交给你。
+          itemCost:
+            itemId: item_sealed_lamp_box
+            itemCount: 1
           endConversation: true
           effects:
             - type: add_fact
+              key: lamp_box_delivered
+              value: true
+            - type: add_fact
               key: handoff_confirmed
               value: true
+            - type: change_relationship
+              source: player
+              target: npc_guide
+              path: trust
+              delta: 15
 - id: conversation_after_delivery
   npcId: npc_guide
   title: 最后一盏灯

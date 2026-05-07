@@ -151,6 +151,7 @@ export function validateSchema(pack: ContentPack): ValidationIssue[] {
       for (const reply of node.replies ?? []) {
         const rawReply = reply as unknown as Record<string, unknown>
         if (!reply.text) issues.push(issue('error', 'schema_error', '会话回复缺少 text', reply.id, 'text'))
+        if (reply.itemCost && (typeof reply.itemCost.itemCount !== 'number' || reply.itemCost.itemCount <= 0)) issues.push(issue('error', 'schema_error', '会话回复 itemCost.itemCount 必须是大于 0 的 number', reply.id, 'itemCost.itemCount'))
         if (!reply.nextNodeId && reply.endConversation !== true) issues.push(issue('error', 'schema_error', '会话回复必须包含 nextNodeId 或 endConversation', reply.id))
         if (reply.nextNodeId && !nodeIds.has(reply.nextNodeId)) issues.push(issue('error', 'schema_error', `nextNodeId 不存在：${reply.nextNodeId}`, reply.id, 'nextNodeId'))
         if (hasOwn(rawReply, 'impact')) issues.push(issue('error', 'schema_error', 'reply.impact 已移除，请使用 effects 表达实际状态变化', reply.id, 'impact'))

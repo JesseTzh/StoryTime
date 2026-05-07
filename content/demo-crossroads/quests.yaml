@@ -13,19 +13,19 @@
         fact: facts.guide_briefed
         equals: true
     - id: objective_morning_mirror
-      title: 早晨完成晨时擦镜
+      title: 早晨完成擦镜规则
       description: 在第一天早晨取得晨镜盐。
       conditions:
         fact: facts.ritual_morning_done
         equals: true
     - id: objective_noon_shadow
-      title: 正午完成正午定影
+      title: 正午完成定影规则
       description: 在第一天正午取得正午影线。
       conditions:
         fact: facts.ritual_noon_done
         equals: true
     - id: objective_night_wick
-      title: 夜晚完成夜里封芯
+      title: 夜晚完成封芯规则
       description: 在第一天夜晚取得夜灰灯芯和封灯匣。
       conditions:
         fact: facts.ritual_night_done
@@ -59,11 +59,10 @@
         fact: facts.lamp_box_delivered
         equals: true
   completion:
-    type: give
+    type: conversation
     npcId: npc_guide
-    itemId: item_sealed_lamp_box
-    itemCount: 1
-    interactionId: interaction_deliver_lamp_box
+    conversationId: conversation_lamp_box_handoff
+    replyId: reply_deliver_lamp_box
   rewardIds:
     - reward_lamp_box_accepted
 - id: quest_light_fog_lamp
