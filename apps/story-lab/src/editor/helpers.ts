@@ -110,6 +110,16 @@ export function summarizeEffect(effect: Effect) {
       return `discover ${effect.locationId}`
     case 'set_tile_visible':
       return `${effect.tileId} visible ${effect.visible}`
+    case 'trigger_ending':
+      return `ending ${effect.endingId}`
+    case 'start_quest':
+      return `start quest ${effect.questId}`
+    case 'fail_quest':
+      return `fail quest ${effect.questId}`
+    case 'fail_quest_objective':
+      return `fail objective ${effect.questId}.${effect.objectiveId}`
+    case 'conditional':
+      return `conditional x${effect.effects.length}`
   }
 }
 

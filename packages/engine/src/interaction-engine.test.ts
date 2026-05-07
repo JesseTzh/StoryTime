@@ -108,6 +108,56 @@ describe('interaction engine', () => {
     expect(result.state.endingResult?.ending.id).toBe('ending_rapport')
   })
 
+  test('conditional interaction effects can skip item rewards without blocking execution or completing item-gated quests', () => {
+    const pack = makePack()
+    pack.items.push({ id: 'item_timed_reward', name: 'Timed Reward', type: 'quest', description: 'Only appears at the right time.' })
+    const interaction = pack.interactions.find((item) => item.id === 'interaction_search_test')
+    if (!interaction) throw new Error('Missing test interaction')
+    interaction.effects = [
+      {
+        type: 'conditional',
+        conditions: { fact: 'time.segment', equals: 'morning' },
+        effects: [{ type: 'add_item', itemId: 'item_timed_reward', count: 1 }],
+        elseEffects: [
+          { type: 'add_fact', key: 'timed_reward_attempted', value: true },
+          { type: 'fail_quest_objective', questId: 'quest_search_test', objectiveId: 'objective_timed_reward' },
+        ],
+      },
+    ]
+    interaction.conditions = { fact: 'facts.timed_reward_attempted', exists: false }
+    const quest = pack.quests.find((item) => item.id === 'quest_search_test')
+    if (!quest) throw new Error('Missing test quest')
+    quest.objectives = [
+      {
+        id: 'objective_timed_reward',
+        title: 'Get timed reward',
+        description: 'Get the timed reward.',
+        conditions: { fact: 'player.inventory.item_timed_reward', greater_than_or_equal: 1 },
+      },
+    ]
+    const initial = createInitialRuntimeState(pack, 'identity_test')
+    initial.time.segment = 'noon'
+    const active = startQuest(pack, initial, 'quest_search_test').state
+
+    const wrongTime = executeInteraction(pack, active, 'interaction_search_test')
+
+    expect(wrongTime.ok).toBe(true)
+    expect(wrongTime.state.time.actionPoints).toBe(active.time.actionPoints - 1)
+    expect(wrongTime.state.player.inventory.item_timed_reward).toBeUndefined()
+    expect(wrongTime.state.worldState.quests.quest_search_test?.status).toBe('active')
+    expect(wrongTime.state.worldState.quests.quest_search_test?.failedObjectiveIds).toEqual(['objective_timed_reward'])
+
+    const secondAttemptAvailability = getInteractionAvailability(pack, wrongTime.state, interaction)
+    expect(secondAttemptAvailability.available).toBe(false)
+
+    const rightTimeState = { ...active, time: { ...active.time, segment: 'morning' as const } }
+    const rightTime = executeInteraction(pack, rightTimeState, 'interaction_search_test')
+
+    expect(rightTime.ok).toBe(true)
+    expect(rightTime.state.player.inventory.item_timed_reward).toBe(1)
+    expect(rightTime.state.worldState.quests.quest_search_test?.status).toBe('completed')
+  })
+
   test('combat victory damages player defeats npc and completes combat quest', () => {
     const pack = makePack()
     const active = startQuest(pack, createInitialRuntimeState(pack, 'identity_test'), 'quest_combat_test').state

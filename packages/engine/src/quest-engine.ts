@@ -82,6 +82,18 @@ export function failQuest(pack: ContentPack, state: GameRuntimeState, questId: s
   return makeResult(next, result.logs, result.ok, result.reason)
 }
 
+export function failQuestObjectiveInPlace(pack: ContentPack, state: GameRuntimeState, questId: string, objectiveId: string): Omit<QuestResult, 'state'> {
+  const quest = findQuest(pack, questId)
+  if (!quest) return { ok: false, logs: [makeLog(state, 'system', `任务不存在：${questId}`)], reason: 'quest_not_found' }
+  if (!quest.objectives?.some((objective) => objective.id === objectiveId)) return { ok: false, logs: [makeLog(state, 'system', `任务目标不存在：${objectiveId}`)], reason: 'objective_not_found' }
+
+  const current = state.worldState.quests[questId] ?? makeQuestState(state, questId)
+  current.failedObjectiveIds ??= []
+  if (!current.failedObjectiveIds.includes(objectiveId)) current.failedObjectiveIds.push(objectiveId)
+  state.worldState.quests[questId] = current
+  return { ok: true, logs: [makeLog(state, 'event', `任务目标失败：${quest.title} / ${objectiveId}`, quest.id)] }
+}
+
 export function completeQuestInPlace(pack: ContentPack, state: GameRuntimeState, questId: string): Omit<QuestResult, 'state'> {
   const quest = findQuest(pack, questId)
   if (!quest) return { ok: false, logs: [makeLog(state, 'system', `任务不存在：${questId}`)], reason: 'quest_not_found' }
@@ -139,6 +151,11 @@ function matchesCompletion(completion: QuestCompletion, trigger: QuestCompletion
   return false
 }
 
+function questObjectivesSatisfied(quest: Quest, state: GameRuntimeState): boolean {
+  const failedObjectiveIds = state.worldState.quests[quest.id]?.failedObjectiveIds ?? []
+  return (quest.objectives ?? []).every((objective) => !failedObjectiveIds.includes(objective.id) && evaluateCondition(objective.conditions, state))
+}
+
 export function resolveQuestCompletions(pack: ContentPack, state: GameRuntimeState, trigger: QuestCompletionTrigger): QuestResult {
   const next = cloneState(state)
   const logs: GameLog[] = []
@@ -147,6 +164,7 @@ export function resolveQuestCompletions(pack: ContentPack, state: GameRuntimeSta
     const current = next.worldState.quests[quest.id]
     if (current?.status !== 'active') continue
     if (!matchesCompletion(quest.completion, trigger)) continue
+    if (!questObjectivesSatisfied(quest, next)) continue
     const result = completeQuestInPlace(pack, next, quest.id)
     logs.push(...result.logs)
   }

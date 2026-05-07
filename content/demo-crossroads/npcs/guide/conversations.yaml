@@ -51,6 +51,8 @@
     all:
       - fact: facts.guide_briefed
         equals: true
+      - fact: time.day
+        equals: 1
       - fact: facts.sealed_lamp_box_ready
         exists: false
   nodes:
@@ -60,6 +62,63 @@
       replies:
         - id: reply_prepare_lamp_ack
           text: 我会带着封灯匣回来。
+          endConversation: true
+- id: conversation_morning_rite_failed
+  npcId: npc_guide
+  title: 晨镜盐已失
+  entryNodeId: node_morning_failed
+  priority: 35
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: facts.ritual_morning_failed
+        equals: true
+  nodes:
+    - id: node_morning_failed
+      speaker: npc_guide
+      text: 你擦镜的时候，晨雾已经退过一层了。那点盐只认第一缕冷光，错过之后，镜面记下的就不是你的影子。
+      replies:
+        - id: reply_morning_failed_ack
+          text: 所以晨镜盐已经取不到了？
+          endConversation: true
+- id: conversation_noon_rite_failed
+  npcId: npc_guide
+  title: 正午影线已乱
+  entryNodeId: node_noon_failed
+  priority: 34
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: facts.ritual_noon_failed
+        equals: true
+  nodes:
+    - id: node_noon_failed
+      speaker: npc_guide
+      text: 影线只在正午肯站直。你动手时它已经斜了，缠进铜扣里的不是路影，是雾影；这样的线，封不住灯。
+      replies:
+        - id: reply_noon_failed_ack
+          text: 正午影线已经不能用了。
+          endConversation: true
+- id: conversation_night_rite_failed
+  npcId: npc_guide
+  title: 夜灰灯芯已冷
+  entryNodeId: node_night_failed
+  priority: 33
+  conditions:
+    all:
+      - fact: time.day
+        equals: 2
+      - fact: facts.ritual_night_failed
+        equals: true
+  nodes:
+    - id: node_night_failed
+      speaker: npc_guide
+      text: 夜里取芯，听的是雾先开口，还是人先伸手。你错了时辰，灰里剩下的只是冷渣，不会再替雾灯认路。
+      replies:
+        - id: reply_night_failed_ack
+          text: 夜灰灯芯已经失效了。
           endConversation: true
 - id: conversation_lamp_box_handoff
   npcId: npc_guide

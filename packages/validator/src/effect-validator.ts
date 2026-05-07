@@ -7,6 +7,10 @@ function validateEffectShape(effect: Effect, targetId: string): ValidationIssue[
     issues.push(issue('error', 'effect_error', 'delta 必须是 number', targetId))
   }
   if ((effect.type === 'add_item' || effect.type === 'remove_item') && effect.count <= 0) issues.push(issue('error', 'effect_error', '物品 count 必须大于 0', targetId))
+  if (effect.type === 'conditional') {
+    for (const nested of Array.isArray(effect.effects) ? effect.effects : []) issues.push(...validateEffectShape(nested, targetId))
+    for (const nested of Array.isArray(effect.elseEffects) ? effect.elseEffects : []) issues.push(...validateEffectShape(nested, targetId))
+  }
   return issues
 }
 

@@ -48,9 +48,12 @@ export function QuestPanel() {
                 <div className="mt-2 space-y-1" data-test-id={`quest-objective-list-${quest.id}`}>
                   {quest.objectives.map((objective) => {
                     const complete = evaluateCondition(objective.conditions, runtime)
+                    const failed = state.failedObjectiveIds?.includes(objective.id) ?? false
                     return (
                       <div key={objective.id} className="flex items-start gap-2 text-xs leading-5 text-stone-400" data-test-id={`quest-objective-${quest.id}-${objective.id}`}>
-                        {complete
+                        {failed
+                          ? <XCircle className="mt-0.5 size-3.5 shrink-0 text-red-200" data-test-id={`quest-objective-icon-${quest.id}-${objective.id}`} />
+                          : complete
                           ? <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-emerald-200" data-test-id={`quest-objective-icon-${quest.id}-${objective.id}`} />
                           : <CircleDot className="mt-0.5 size-3.5 shrink-0 text-amber-100" data-test-id={`quest-objective-icon-${quest.id}-${objective.id}`} />}
                         <span data-test-id={`quest-objective-text-${quest.id}-${objective.id}`}>{objective.title}</span>

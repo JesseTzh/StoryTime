@@ -1,7 +1,7 @@
 import type { ContentPack, Effect, GameLog, GameRuntimeState } from '@tss/schema'
 import { evaluateCondition } from './condition-engine'
 import { buildEndingResult } from './ending-engine'
-import { failQuestInPlace, startQuestInPlace } from './quest-engine'
+import { failQuestInPlace, failQuestObjectiveInPlace, startQuestInPlace } from './quest-engine'
 import { changeNumberByPath, clampVariable, ensureRelationship, makeLog, setByPath } from './state-utils'
 
 export function applyEffect(pack: ContentPack, state: GameRuntimeState, effect: Effect): GameLog[] {
@@ -181,6 +181,14 @@ export function applyEffect(pack: ContentPack, state: GameRuntimeState, effect: 
     }
     case 'fail_quest': {
       logs.push(...failQuestInPlace(pack, state, effect.questId).logs)
+      break
+    }
+    case 'fail_quest_objective': {
+      logs.push(...failQuestObjectiveInPlace(pack, state, effect.questId, effect.objectiveId).logs)
+      break
+    }
+    case 'conditional': {
+      logs.push(...applyEffects(pack, state, evaluateCondition(effect.conditions, state) ? effect.effects : effect.elseEffects ?? []))
       break
     }
   }

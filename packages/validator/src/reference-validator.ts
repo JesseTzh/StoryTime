@@ -40,13 +40,21 @@ function validateEffectReference(effect: Effect, pack: ContentPack, targetId: st
   if (effect.type === 'trigger_event' && !sets.events.has(effect.eventId)) issues.push(issue('error', 'reference_error', `引用了不存在的事件：${effect.eventId}`, targetId))
   if (effect.type === 'trigger_ending' && !sets.endings.has(effect.endingId)) issues.push(issue('error', 'reference_error', `引用了不存在的结局：${effect.endingId}`, targetId))
   if (effect.type === 'start_conversation' && !sets.conversations.has(effect.conversationId)) issues.push(issue('error', 'reference_error', `引用了不存在的会话：${effect.conversationId}`, targetId))
-  if ((effect.type === 'start_quest' || effect.type === 'fail_quest') && !sets.quests.has(effect.questId)) issues.push(issue('error', 'reference_error', `引用了不存在的任务：${effect.questId}`, targetId))
+  if ((effect.type === 'start_quest' || effect.type === 'fail_quest' || effect.type === 'fail_quest_objective') && !sets.quests.has(effect.questId)) issues.push(issue('error', 'reference_error', `引用了不存在的任务：${effect.questId}`, targetId))
+  if (effect.type === 'fail_quest_objective') {
+    const quest = pack.quests.find((item) => item.id === effect.questId)
+    if (quest && !quest.objectives?.some((objective) => objective.id === effect.objectiveId)) issues.push(issue('error', 'reference_error', `引用了不存在的任务目标：${effect.objectiveId}`, targetId))
+  }
   if (effect.type === 'discover_location' && !sets.locations.has(effect.locationId)) issues.push(issue('error', 'reference_error', `引用了不存在的地点：${effect.locationId}`, targetId))
   if (effect.type === 'set_tile_visible' && !sets.tiles.has(effect.tileId)) issues.push(issue('error', 'reference_error', `引用了不存在的地块：${effect.tileId}`, targetId))
   if (effect.type === 'change_relationship') {
     const validSource = effect.source === 'player' || sets.npcs.has(effect.source)
     const validTarget = effect.target === 'player' || sets.npcs.has(effect.target)
     if (!validSource || !validTarget) issues.push(issue('error', 'reference_error', `关系引用不存在：${effect.source} -> ${effect.target}`, targetId))
+  }
+  if (effect.type === 'conditional') {
+    for (const nested of Array.isArray(effect.effects) ? effect.effects : []) issues.push(...validateEffectReference(nested, pack, targetId))
+    for (const nested of Array.isArray(effect.elseEffects) ? effect.elseEffects : []) issues.push(...validateEffectReference(nested, pack, targetId))
   }
   return issues
 }

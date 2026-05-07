@@ -1,35 +1,38 @@
 - id: quest_prepare_lamp_rite
-  title: 遵守三段雾灯规则
-  description: 守灯人要求你在第一天早晨、正午、夜晚分别完成三项雾灯规则，凑齐封灯匣。
+  title: 收齐三件封灯物
+  description: 依照守灯人的指引，在第一天早晨、正午、夜晚分别取得晨镜盐、正午影线和夜灰灯芯，凑齐封灯匣。
   sourceNpcId: npc_guide
   conditions:
     fact: facts.guide_briefed
     equals: true
   objectives:
     - id: objective_rules_received
-      title: 与守灯人确认三条规则
-      description: 开局先听完守灯人说明，知道早、中、晚各自不能违背的动作。
+      title: 问清离开的办法
+      description: 开局先听完守灯人说明，知道雾灯需要哪些封灯物才能重新亮起。
       conditions:
         fact: facts.guide_briefed
         equals: true
     - id: objective_morning_mirror
-      title: 早晨完成擦镜规则
-      description: 在第一天早晨取得晨镜盐。
+      title: 取得晨镜盐
+      description: 在第一天早晨背灯擦镜，取得晨镜盐。
       conditions:
-        fact: facts.ritual_morning_done
-        equals: true
+        fact: player.inventory.item_mirror_salt
+        greater_than_or_equal: 1
     - id: objective_noon_shadow
-      title: 正午完成定影规则
-      description: 在第一天正午取得正午影线。
+      title: 取得正午影线
+      description: 在第一天正午量定灯架影线，取得正午影线。
       conditions:
-        fact: facts.ritual_noon_done
-        equals: true
+        fact: player.inventory.item_shadow_thread
+        greater_than_or_equal: 1
     - id: objective_night_wick
-      title: 夜晚完成封芯规则
-      description: 在第一天夜晚取得夜灰灯芯和封灯匣。
+      title: 取得夜灰灯芯
+      description: 在第一天夜晚从旧灯芯灰里取出夜灰灯芯，让封灯匣合上。
       conditions:
-        fact: facts.ritual_night_done
-        equals: true
+        all:
+          - fact: player.inventory.item_ashen_wick
+            greater_than_or_equal: 1
+          - fact: player.inventory.item_sealed_lamp_box
+            greater_than_or_equal: 1
   completion:
     type: environment
     environmentType: search

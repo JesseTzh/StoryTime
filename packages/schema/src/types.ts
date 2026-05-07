@@ -28,6 +28,8 @@ export type EffectType =
   | 'set_tile_visible'
   | 'start_quest'
   | 'fail_quest'
+  | 'fail_quest_objective'
+  | 'conditional'
 
 export type JsonValue = null | string | number | boolean | JsonValue[] | { [key: string]: JsonValue }
 export type AnyRecord = Record<string, unknown>
@@ -284,6 +286,7 @@ export type QuestRuntimeState = {
   status: QuestStatus
   startedAt: { day: number; segment: TimeSegment }
   completedAt?: { day: number; segment: TimeSegment }
+  failedObjectiveIds?: string[]
 }
 
 export type ConditionGroup = Condition | { all: Condition[] } | { any: Condition[] } | { not: Condition }
@@ -323,6 +326,8 @@ export type Effect =
   | { type: 'set_tile_visible'; tileId: string; visible: boolean; discovered?: boolean }
   | { type: 'start_quest'; questId: string }
   | { type: 'fail_quest'; questId: string }
+  | { type: 'fail_quest_objective'; questId: string; objectiveId: string }
+  | { type: 'conditional'; conditions: ConditionGroup; effects: Effect[]; elseEffects?: Effect[] }
 
 export type GameEvent = {
   id: string

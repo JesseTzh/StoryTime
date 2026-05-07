@@ -15,18 +15,36 @@
       - fact: facts.ritual_morning_done
         exists: false
   effects:
-    - type: add_item
-      itemId: item_mirror_salt
-      count: 1
-    - type: add_fact
-      key: ritual_morning_done
-      value: true
-    - type: change_variable
-      key: lamp_readiness
-      delta: 25
-    - type: change_variable
-      key: rule_integrity
-      delta: 15
+    - type: conditional
+      conditions:
+        all:
+          - fact: time.day
+            equals: 1
+          - fact: time.segment
+            equals: morning
+      effects:
+        - type: add_item
+          itemId: item_mirror_salt
+          count: 1
+        - type: add_fact
+          key: ritual_morning_done
+          value: true
+        - type: change_variable
+          key: lamp_readiness
+          delta: 25
+        - type: change_variable
+          key: rule_integrity
+          delta: 15
+      elseEffects:
+        - type: add_fact
+          key: ritual_morning_done
+          value: true
+        - type: add_fact
+          key: ritual_morning_failed
+          value: true
+        - type: fail_quest_objective
+          questId: quest_prepare_lamp_rite
+          objectiveId: objective_morning_mirror
 - id: interaction_noon_shadow
   name: 灯架定影
   description: 量出灯架的第十三根影线，把它缠到封灯匣的铜扣上。
@@ -44,18 +62,36 @@
       - fact: facts.ritual_noon_done
         exists: false
   effects:
-    - type: add_item
-      itemId: item_shadow_thread
-      count: 1
-    - type: add_fact
-      key: ritual_noon_done
-      value: true
-    - type: change_variable
-      key: lamp_readiness
-      delta: 25
-    - type: change_variable
-      key: fog_pressure
-      delta: -10
+    - type: conditional
+      conditions:
+        all:
+          - fact: time.day
+            equals: 1
+          - fact: time.segment
+            equals: noon
+      effects:
+        - type: add_item
+          itemId: item_shadow_thread
+          count: 1
+        - type: add_fact
+          key: ritual_noon_done
+          value: true
+        - type: change_variable
+          key: lamp_readiness
+          delta: 25
+        - type: change_variable
+          key: fog_pressure
+          delta: -10
+      elseEffects:
+        - type: add_fact
+          key: ritual_noon_done
+          value: true
+        - type: add_fact
+          key: ritual_noon_failed
+          value: true
+        - type: fail_quest_objective
+          questId: quest_prepare_lamp_rite
+          objectiveId: objective_noon_shadow
 - id: interaction_night_wick
   name: 灰里封芯
   description: 雾中有人呼唤你的名字时不要应声，只从旧灯芯灰里拈出还能发冷的那一缕。
@@ -73,24 +109,42 @@
       - fact: facts.ritual_night_done
         exists: false
   effects:
-    - type: add_item
-      itemId: item_ashen_wick
-      count: 1
-    - type: add_item
-      itemId: item_sealed_lamp_box
-      count: 1
-    - type: add_fact
-      key: ritual_night_done
-      value: true
-    - type: add_fact
-      key: sealed_lamp_box_ready
-      value: true
-    - type: change_variable
-      key: lamp_readiness
-      delta: 30
-    - type: change_variable
-      key: rule_integrity
-      delta: 20
+    - type: conditional
+      conditions:
+        all:
+          - fact: time.day
+            equals: 1
+          - fact: time.segment
+            equals: night
+      effects:
+        - type: add_item
+          itemId: item_ashen_wick
+          count: 1
+        - type: add_item
+          itemId: item_sealed_lamp_box
+          count: 1
+        - type: add_fact
+          key: ritual_night_done
+          value: true
+        - type: add_fact
+          key: sealed_lamp_box_ready
+          value: true
+        - type: change_variable
+          key: lamp_readiness
+          delta: 30
+        - type: change_variable
+          key: rule_integrity
+          delta: 20
+      elseEffects:
+        - type: add_fact
+          key: ritual_night_done
+          value: true
+        - type: add_fact
+          key: ritual_night_failed
+          value: true
+        - type: fail_quest_objective
+          questId: quest_prepare_lamp_rite
+          objectiveId: objective_night_wick
 - id: interaction_light_fog_lamp
   name: 点亮雾灯
   description: 在守灯人的注视下把封过的夜灰灯芯压入灯盏，直到雾里所有多余的脚步声同时停下。
